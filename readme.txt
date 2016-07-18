@@ -18,6 +18,8 @@ This plugin can help you to use KeyCDN on your WordPress, not only your Media an
 
 This plugin only cache the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
 
+The development version is on [gitTLO](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN) and [GitHub](https://github.com/ZE3kr/Full-Site-Cache-for-KeyCDN), you can download the development version to help us to test, and [leave your issues here](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN/issues).
+
 = Features =
 
 This plugin support those features **even if your server doesn’t support it**, works well with shared hosting.
@@ -33,13 +35,13 @@ This plugin support those features **even if your server doesn’t support it**,
 
 The CloudFlare also can give you CDN, SSL and HTTP/2 support, but there’s something KeyCDN can but CloudFlare free plan cannot:
 
-+ Cache HTML page
++ **Cache HTML page**, that means all the HTML page on CloudFlare is not cacheable and the request will bypass your origin server.
 + Use custom SSL certificate, including **EV certificate**.
 + Use CNAME and doesn’t need to change NS server.
-+ Raw log forwarding in real time (CloudFlare has 24 hours delay for free plan)
++ Raw log forwarding in **real time** (CloudFlare has 24 hours delay for free plan)
 + Clear Cache by Tag
 
-However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is a affordable choice.
+However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is a affordable choice. And CloudFlare is also a very good DNS provider, you can still use it.
 
 = Requirements =
 
@@ -57,11 +59,11 @@ Put the folder `full-site-cache-kc` in your server, to `wp-content/plugins/full-
 
 Or if you can add plugin online, you can search `full-site-cache-kc` and install it.
 
-After that, goto the settings page of this plugin, which is called “KeyCDN”, and click “Setup Online” button, and following the introduction of the installation.
+After that, goto the settings page of this plugin, which is called “KeyCDN”, and click “Setup Online” button, and following the introduction of the installation, you **does not need** to follow the Manual Setup guide below.
 
 == Manual Setup ==
 
-You can set it up manually, and use an existing Zone.
+You can set it up manually, and use an existing Zone, only if you want to manual setup, you need to do this.
 
 Note: This plugin doesn’t support root domain like `example.com`, you have to change settings before use it.
 
@@ -283,11 +285,15 @@ And if you change “Cache Behavior” in the settings page of “Cache Enabler�
 
 == Extra Settings For Root Domain ==
 
-Don’t know why can’t use this plugin on root doamin? See <a target="_blank" href="https://wordpress.org/plugins/full-site-cache-kc/faq/">FAQ page</a>.
-
 You will get an error if you trying to enable it for root domain, whatever you setup manually or not.
 
 To solve this problem, you need to change your domain beginning with `www.`, for example, if your blog domain is `example.com`, you have to change it to `www.example.com`.
+
+However, you are still able to use root domain if your DNS provider supports ANAME record (or CNAME Flattening), for example, CloudFlare supports this feature, so you can set a CNAME record on your root domain and won't get any error! The version 2.2.0 brings this feature, you need to add this line to your `wp-config.php`:
+
+```
+$fsckeycdn_root_domain_setup = true;
+```
 
 = For NOT Multisite Installed =
 
@@ -338,6 +344,10 @@ You need to add this line **after** the `$fsckeycdn_id` if you use Manual Setup.
 = Why can’t use this plugin on root doamin? =
 
 Because to use KeyCDN, it need to set a CNAME record on the domain. But CNAME records are not supported on root domains (e.g. example.com) as they would conflict with the SOA- and NS-records (RFC1912 section 2.4: “A CNAME record is not allowed to coexist with any other data.”), an alternative is to redirect your root domain to a subdomain (e.g. www).
+
+However, you are still able to use root domain if your DNS provider supports ANAME record (or CNAME Flattening), for example, CloudFlare supports this feature, so you can set a CNAME record on your root domain and won't get any error! The version 2.2.0 brings this feature, you need to add this line to your `wp-config.php`:
+
+	$fsckeycdn_root_domain_setup = true;
 
 = Why this plugin need to change the Siteurl? =
 

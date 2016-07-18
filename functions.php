@@ -1,5 +1,6 @@
 <?php
 function fsckeycdn_id(){
+	/* A function to return settings */
 	global $fsckeycdn_id,$fsckeycdn_blog_id;
 	if(isset($fsckeycdn_id)){
 		if(is_array($fsckeycdn_id) && isset($fsckeycdn_id[$fsckeycdn_blog_id])){
@@ -14,6 +15,7 @@ function fsckeycdn_id(){
 }
 
 function fsckeycdn_purge(){
+	/* A function to return settings */
 	global $fsckeycdn_purge,$fsckeycdn_blog_id;
 	if(isset($fsckeycdn_purge)){
 		if(is_array($fsckeycdn_purge) && isset($fsckeycdn_purge[$fsckeycdn_blog_id])){
@@ -27,6 +29,7 @@ function fsckeycdn_purge(){
 }
 
 function fsckeycdn_status(){
+	/* A function to return settings */
 	global $fsckeycdn_id,$fsckeycdn_apikey,$fsckeycdn_blog_id;
 	if( is_array($fsckeycdn_id) && isset($fsckeycdn_id[$fsckeycdn_blog_id]) && $fsckeycdn_id[$fsckeycdn_blog_id] === false ) {
 		return false;
@@ -42,6 +45,7 @@ function fsckeycdn_status(){
 }
 
 function fsckeycdn_wp_config(){
+	/* A function to return settings */
 	global $fsckeycdn_id;
 	if(isset($fsckeycdn_id)){
 		return true;
@@ -51,6 +55,7 @@ function fsckeycdn_wp_config(){
 }
 
 function fsckeycdn_check($zone,$name,$key){
+	/* A function to return settings */
 	foreach($zone as $each){
 		if($each[$key] == $name){
 			return $each;
@@ -60,6 +65,7 @@ function fsckeycdn_check($zone,$name,$key){
 }
 
 function fsckeycdn_check_ce(){
+	/* A function to return settings */
 	global $fsckeycdn_ce;
 	$fsckeycdn_ce = wp_parse_args(
 		get_option('cache'),
@@ -162,7 +168,6 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 		}
 	}
 
-	$url = 'https://'.$fsckeycdn_apikey.':@api.keycdn.com/zones/';
 	$purge = false;
 	if($fsckeycdn_purge == 1){
 		$purge = ['archive-'.$fsckeycdn_blog_id, 'id-'.$fsckeycdn_blog_id.'-'.$post_ID];
@@ -187,6 +192,7 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 		if(has_action('ce_clear_cache')){
 			do_action('ce_clear_cache');
 		}
+		wp_schedule_single_event(time(), 'fsckeycdn_purge_tag_hook', [$purge]);
 		wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$fsckeycdn_id.'.json',[
 			'method' => 'DELETE',
 			'body' => ['tags' => $purge],
@@ -195,20 +201,33 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 	}
 }
 
-function fsckeycdn_purge_id( $post_ID ) {
-	global $fsckeycdn_apikey, $fsckeycdn_blog_id, $fsckeycdn_ce;
-	$fsckeycdn_purge = fsckeycdn_purge();
+function fsckeycdn_purge_tag( $tag ) {
+	global $fsckeycdn_apikey, $fsckeycdn_blog_id;
 	$fsckeycdn_id = fsckeycdn_id();
+
+	wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$fsckeycdn_id.'.json',[
+		'method' => 'DELETE',
+		'body' => ['tags' => $tag],
+		'timeout' => 20,
+	]);
+}
+
+function fsckeycdn_purge_id_cron( $post_ID ) {
+	wp_schedule_single_event(time(), 'fsckeycdn_purge_id_hook', [$post_ID]);
+}
+
+function fsckeycdn_purge_id( $post_ID ) {
+	global $fsckeycdn_apikey, $fsckeycdn_blog_id;
+	$zone = fsckeycdn_id();
 
 	// check if post id or post is empty
 	if ( empty($post_ID) ) {
 		return;
 	}
 
-	$url = 'https://'.$fsckeycdn_apikey.':@api.keycdn.com/zones/';
 	$purge = ['id-'.$fsckeycdn_blog_id.'-'.$post_ID];
 
-	wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$fsckeycdn_id.'.json',[
+	wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
 		'method' => 'DELETE',
 		'body' => ['tags' => $purge],
 		'timeout' => 20,
@@ -256,40 +275,28 @@ function fsckeycdn_purge_all() {
 	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purge/'.$zone.'.json',['method' => 'GET','timeout' => 20,]);
 }
 
-function fsckeycdn_change_comment_cron($after_status, $before_status, $comment) {
-	wp_schedule_single_event(time(), 'fsckeycdn_change_comment_hook');
-}
-
 function fsckeycdn_change_comment($after_status, $before_status, $comment) {
 	global $fsckeycdn_ce;
 	// check if changes occured
 	if ( $after_status != $before_status ) {
 		if ( $fsckeycdn_ce && $fsckeycdn_ce['new_comment'] ) {
-			fsckeycdn_purge_blog();
+			fsckeycdn_purge_blog_cron();
 		} else {
-			fsckeycdn_purge_id( $comment->comment_post_ID );
+			fsckeycdn_purge_id_cron( $comment->comment_post_ID );
 		}
 	}
-}
-
-function fsckeycdn_edit_comment_cron($after_status, $before_status, $comment) {
-	wp_schedule_single_event(time(), 'fsckeycdn_edit_comment_hook');
 }
 
 function fsckeycdn_edit_comment($id) {
 	global $fsckeycdn_ce;
 	// clear complete cache if option enabled
 	if ( $fsckeycdn_ce && $fsckeycdn_ce['new_comment'] ) {
-		fsckeycdn_purge_blog();
+		fsckeycdn_purge_blog_cron();
 	} else {
-		fsckeycdn_purge_id(
+		fsckeycdn_purge_id_cron(
 			get_comment($id)->comment_post_ID
 		);
 	}
-}
-
-function fsckeycdn_new_comment_cron($after_status, $before_status, $comment) {
-	wp_schedule_single_event(time(), 'fsckeycdn_new_comment_hook');
 }
 
 function fsckeycdn_new_comment($approved, $comment) {
@@ -297,9 +304,9 @@ function fsckeycdn_new_comment($approved, $comment) {
 	// check if comment is approved
 	if ( $approved === 1 ) {
 		if ( $fsckeycdn_ce && $fsckeycdn_ce['new_comment'] ) {
-			fsckeycdn_purge_blog();
+			fsckeycdn_purge_blog_cron();
 		} else {
-			fsckeycdn_purge_id( $comment['comment_post_ID'] );
+			fsckeycdn_purge_id_cron( $comment['comment_post_ID'] );
 		}
 	}
 
@@ -477,7 +484,7 @@ function fsckeycdn_control_options() {
 <div class="wrap">
 	<h1>WP KeyCDN Settings</h1>
 	<?php
-	global $fsckeycdn_realhost,$fsckeycdn_apikey,$fsckeycdn_scheme,$fsckeycdn_user_id,$fsckeycdn_x_pull_key,$fsckeycdn_blog_id,$fsckeycdn_default_settings,$fsckeycdn_plugins_url,$fsckeycdn_ce,$fsckeycdn_id,$fsckeycdn_admin,$fsckeycdn_amane;
+	global $fsckeycdn_realhost,$fsckeycdn_apikey,$fsckeycdn_scheme,$fsckeycdn_user_id,$fsckeycdn_x_pull_key,$fsckeycdn_blog_id,$fsckeycdn_default_settings,$fsckeycdn_plugins_url,$fsckeycdn_ce,$fsckeycdn_id,$fsckeycdn_admin,$fsckeycdn_root_domain_setup;
 	if( is_array($fsckeycdn_id) && isset($fsckeycdn_id[$fsckeycdn_blog_id]) && $fsckeycdn_id[$fsckeycdn_blog_id] === false ) {
 		wp_die( 'WP KeyCDN has disabled for this site.' );
 	}
@@ -490,7 +497,7 @@ function fsckeycdn_control_options() {
 	$zone_name = substr(preg_replace('/[^a-z0-9]+/','', strtolower($_SERVER['HTTP_HOST'])),0,20);
 	$urlhostarray = explode('.',$url['host']);
 	$httphostarray = explode('.',$url['host']);
-	if(!(isset($fsckeycdn_amane) && $fsckeycdn_amane === true)){
+	if( !(isset($fsckeycdn_root_domain_setup) && $fsckeycdn_root_domain_setup === true) ){
 		if(!isset($urlhostarray[2])){
 			wp_die( 'This plugin does not support enable in a blog that use root domain (e.g. example.com). <a target="blank" href="https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-Root-Domain">How to fix it?</a>' );
 		} elseif(!isset($httphostarray[2])){
