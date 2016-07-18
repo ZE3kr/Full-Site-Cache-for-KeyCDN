@@ -1,0 +1,7 @@
+pages:
+  stage: deploy
+  script:
+  - 'if find . -type f -name "*.php" -exec nice php -l {} \; | grep -v "No syntax errors"; then false; else echo "No syntax errors"; fi'
+  - sshpass -p $SSHPASS ssh tlo@localhost "cd $PWD; git push --force --mirror git@github.com:ZE3kr/Full-Site-Cache-for-KeyCDN.git ;"
+  only:
+  - master

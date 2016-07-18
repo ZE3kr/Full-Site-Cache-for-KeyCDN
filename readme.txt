@@ -1,9 +1,9 @@
 === Full Site Cache for KeyCDN ===
 Contributors: ze3kr, keycdn
-Donate link: https://www.tlo.xyz/donate/
+Donate link: https://tlo.xyz/donate/
 Tags: keycdn, cache, optimize, performance, speed, pagespeed, html, cdn, proxy
 Requires at least: 4.4
-Tested up to: 4.5
+Tested up to: 4.6
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -28,6 +28,18 @@ This plugin support those features **even if your server doesn’t support it**,
 + GZIP
 + CDN (Layer 7 proxy)
 + Hide origin IP and prevent DDOS attack to your server (Suggest using CloudFlare for the wp-admin doamin, and change your IP address, [see it in “IP White List” section](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Advance-Feature)).
+
+= Compare it with CloudFlare =
+
+The CloudFlare also can give you CDN, SSL and HTTP/2 support, but there’s something KeyCDN can but CloudFlare free plan cannot:
+
++ Cache HTML page
++ Use custom SSL certificate, including **EV certificate**.
++ Use CNAME and doesn’t need to change NS server.
++ Raw log forwarding in real time (CloudFlare has 24 hours delay for free plan)
++ Clear Cache by Tag
+
+However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is a affordable choice.
 
 = Requirements =
 
@@ -295,7 +307,7 @@ It will disable KeyCDN for ALL blogs if you are using Multisite.
 
 = 1. Remove the configurations =
 
-You need to remove the lines that you added in wp-config.php file. And you **MUST** remove these line before your delete this plugin.
+You need to remove the lines that you added in wp-config.php file. And you **MUST** remove these line before your **delete** this plugin.
 
 	/* Start WP KeyCDN code */
 	Some codes……
@@ -307,7 +319,7 @@ It’s optional.
 
 = 3. Change the Siteurl =
 
-Use <a href="https://github.com/interconnectit/Search-Replace-DB">Search Replace DB</a>, replace `://wp-admin.` to `://www.`, `://wp-admin-` to `://`.
+Use <a href="https://github.com/interconnectit/Search-Replace-DB">Search Replace DB</a>, replace `://wp-admin.` to `://www.`, and `://wp-admin-` to `://`.
 
 = How to disable A blog in Multisite =
 
@@ -346,11 +358,13 @@ This plugin needs your API Key to:
 
 Your API Key only store in the `wp-config.php` file, this plugin never store this in the database, and never send this to other server.
 
-= It takes a long time to publish a long time to publish a post or page? =
-
-That is because this plugin will purge the cache immediately, and that need to send a request to KeyCDN server. It very depend on your network and KeyCDN network.
-
 == Changelog ==
+
+= 2.2.0 =
+
++ Compatible with WordPress 4.6.
++ Use cron job to purge, so now it soesn't has delay to purge!
++ Support to use KeyCDN on a non-www root domain for some DNS provider.
 
 = 2.1.5.1 =
 

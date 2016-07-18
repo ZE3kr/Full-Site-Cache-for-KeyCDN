@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Full Site Cache for KeyCDN
- * @version 2.1.5.1
+ * @version 2.2.0
  */
 /*
 Plugin Name: Full Site Cache for KeyCDN
 Plugin URI: https://wordpress.org/plugins/full-site-cache-kc/
 Description: This plugin allows full site acceleration for WordPress with KeyCDN, which gives you the advantages of free SSL, HTTP/2, GZIP and more.
 Author: ZE3kr
-Version: 2.1.5.1
+Version: 2.2.0
 Network: True
 Author URI: https://www.ze3kr.com/
 */
@@ -58,12 +58,19 @@ if( PHP_VERSION_ID >= 50400 ){
 			add_action( 'wp', 'fsckeycdn_header' );
 			add_action( 'admin_bar_menu', 'fsckeycdn_add_admin_links', 99);
 			add_action( 'plugins_loaded', 'fsckeycdn_check_ce' );
-			add_action( 'transition_comment_status', 'fsckeycdn_change_comment', 91, 3 );
-			add_action( 'edit_comment', 'fsckeycdn_edit_comment' );
-			add_action( 'pre_comment_approved', 'fsckeycdn_new_comment', 99, 2);
-			add_action( 'trashed_post', 'fsckeycdn_purge_blog', 91 );
-			add_action( 'switch_theme', 'fsckeycdn_purge_blog', 91 );
-			add_action( '_core_updated_successfully', 'fsckeycdn_purge_all', 91 );
+			add_action( 'transition_comment_status', 'fsckeycdn_change_comment_cron', 91, 3 );
+			add_action( 'edit_comment', 'fsckeycdn_edit_comment_cron' );
+			add_action( 'pre_comment_approved', 'fsckeycdn_new_comment_cron', 99, 2);
+			add_action( 'trashed_post', 'fsckeycdn_purge_blog_cron', 91 );
+			add_action( 'switch_theme', 'fsckeycdn_purge_blog_cron', 91 );
+			add_action( '_core_updated_successfully', 'fsckeycdn_purge_all_cron', 91 );
+
+			add_action('fsckeycdn_purge_blog_hook', 'fsckeycdn_purge_blog');
+			add_action('fsckeycdn_purge_all_blog_hook', 'fsckeycdn_purge_all_blog');
+			add_action('fsckeycdn_purge_all_hook', 'fsckeycdn_purge_all');
+			add_action('fsckeycdn_change_comment_hook', 'fsckeycdn_change_comment');
+			add_action('fsckeycdn_new_comment_hook', 'fsckeycdn_new_comment');
+			add_action('fsckeycdn_edit_comment_hook', 'fsckeycdn_edit_comment');
 			/* Add rewrite action */
 			if($_SERVER['HTTP_X_PULL'] == $fsckeycdn_x_pull_key){
 				add_action( 'template_redirect','fsckeycdn_minify_html', 80 );

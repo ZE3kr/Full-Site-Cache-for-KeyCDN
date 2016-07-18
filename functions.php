@@ -215,7 +215,12 @@ function fsckeycdn_purge_id( $post_ID ) {
 	]);
 }
 
+function fsckeycdn_purge_blog_cron() {
+	wp_schedule_single_event(time(), 'fsckeycdn_purge_blog_hook');
+}
+
 function fsckeycdn_purge_blog() {
+	// Purge a specific blog.
 	global $fsckeycdn_apikey,$fsckeycdn_blog_id;
 	$zone = fsckeycdn_id();
 	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
@@ -225,7 +230,12 @@ function fsckeycdn_purge_blog() {
 	]);
 }
 
+function fsckeycdn_purge_all_blog_cron() {
+	wp_schedule_single_event(time(), 'fsckeycdn_purge_all_blog_hook');
+}
+
 function fsckeycdn_purge_all_blog() {
+	// Purge the whole blogs (for multisite Sub-directories install) but static file (CSS, JS, and media).
 	global $fsckeycdn_apikey;
 	$zone = fsckeycdn_id();
 	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
@@ -235,10 +245,19 @@ function fsckeycdn_purge_all_blog() {
 	]);
 }
 
+function fsckeycdn_purge_all_cron() {
+	wp_schedule_single_event(time(), 'fsckeycdn_purge_all_hook');
+}
+
 function fsckeycdn_purge_all() {
+	// Purge the whole blog include static file.
 	global $fsckeycdn_apikey;
 	$zone = fsckeycdn_id();
 	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purge/'.$zone.'.json',['method' => 'GET','timeout' => 20,]);
+}
+
+function fsckeycdn_change_comment_cron($after_status, $before_status, $comment) {
+	wp_schedule_single_event(time(), 'fsckeycdn_change_comment_hook');
 }
 
 function fsckeycdn_change_comment($after_status, $before_status, $comment) {
@@ -253,6 +272,10 @@ function fsckeycdn_change_comment($after_status, $before_status, $comment) {
 	}
 }
 
+function fsckeycdn_edit_comment_cron($after_status, $before_status, $comment) {
+	wp_schedule_single_event(time(), 'fsckeycdn_edit_comment_hook');
+}
+
 function fsckeycdn_edit_comment($id) {
 	global $fsckeycdn_ce;
 	// clear complete cache if option enabled
@@ -263,6 +286,10 @@ function fsckeycdn_edit_comment($id) {
 			get_comment($id)->comment_post_ID
 		);
 	}
+}
+
+function fsckeycdn_new_comment_cron($after_status, $before_status, $comment) {
+	wp_schedule_single_event(time(), 'fsckeycdn_new_comment_hook');
 }
 
 function fsckeycdn_new_comment($approved, $comment) {
