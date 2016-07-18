@@ -1,6 +1,6 @@
 # Full Site Cache Enabler for KeyCDN
 
-[![build status](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN/badges/master/build.svg)](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN/commits/master)
+[![build status](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN/badges/master/build.svg)](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN/builds)
 
 Make all HTML page on CDN cache, optimize your website speed. Make your site superfast.
 
