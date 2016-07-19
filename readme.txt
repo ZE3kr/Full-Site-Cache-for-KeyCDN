@@ -254,7 +254,7 @@ And add the configuration code to `wp-config.php`, and **above** `require_once` 
 		'2606:4700::/32',
 		'2803:f800::/32'
 	]; // This is CloudFlare's IPv6.
-	$fsckeycdn_client_ip = $_SERVER['REMOTE_ADDR']; // The IP for CloudFlare.
+	$fsckeycdn_client_ip = $_SERVER['REMOTE_ADDR']; // The IP for CloudFlare, if it doesn’t work, please try `end(explode(', ',$_SERVER['HTTP_X_FORWARDED_FOR']))`
 	$fsckeycdn_client_real_ip = $_SERVER['HTTP_CF_CONNECTING_IP']; // The IP for real client (Optional)
 
 Then, go to KeyCDN Zone settings page, change “Origin URL” to `http(s)://[key].example.com`, disabled “Origin Shield” and enable “Forward Host Header”.
@@ -375,6 +375,7 @@ Your API Key only store in the `wp-config.php` file, this plugin never store thi
 + Compatible with WordPress 4.6.
 + Use cron job to purge, so now it soesn't has delay to purge!
 + Support to use KeyCDN on a non-www root domain for some DNS provider.
++ Fix a bug when using setup online.
 
 = 2.1.5.1 =
 

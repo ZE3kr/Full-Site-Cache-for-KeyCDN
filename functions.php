@@ -114,7 +114,7 @@ function fsckeycdn_meta($meta, $file) {
 function fsckeycdn_header(){
 	global $fsckeycdn_x_pull_key, $fsckeycdn_scheme, $fsckeycdn_realhost, $fsckeycdn_blog_id,$fsckeycdn_admin;
 	/* Set redirect if user not logged in */
-	if(substr($_SERVER['REQUEST_URI'],0,11) != '/robots.txt' && $_SERVER['SCRIPT_NAME'] == '/index.php' && $_SERVER['HTTP_X_PULL'] != $fsckeycdn_x_pull_key && !is_user_logged_in()) {
+	if(substr($_SERVER['REQUEST_URI'],0,11) != '/robots.txt' && $_SERVER['SCRIPT_NAME'] == '/index.php' && !isset($_SERVER['HTTP_X_PULL']) && !is_user_logged_in()) {
 		if($fsckeycdn_admin == $fsckeycdn_realhost) {
 			header('HTTP/1.1 302 Moved Temporarily');
 			header('Location: '.wp_login_url($fsckeycdn_scheme.'://'.$fsckeycdn_realhost.$_SERVER['REQUEST_URI']));
@@ -450,7 +450,8 @@ function fsckeycdn_purge_notice(){
 	echo fsckeycdn_return_notice( $fsckeycdn_purge_return, true)[0];
 }
 
-function fsckeycdn_return_notice($array,$dismissible) {
+function fsckeycdn_return_notice($array,$dismissible=false) {
+	$add_html = '';
 	if($dismissible){
 		$add_class = ' is-dismissible';
 		$add_html = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>';
@@ -716,7 +717,7 @@ HTML;
 						echo $notice;
 					} else {
 						$notice = <<<HTML
-<p><strong>Success: You finished setup!</strong></p>
+<p><strong>Success: You finished setup! You might need to login again.</strong></p>
 HTML;
 						wp_die( $notice );
 					}
@@ -738,7 +739,7 @@ HTML;
 					$addzonealiases_return = json_decode($addzonealiases_return['body'], true);
 					$notice = fsckeycdn_return_notice($addzonealiases_return);
 					if($notice[1]){
-						wp_die( $notice[0].'<p><strong>Success: You finished setup!</strong></p>' );
+						wp_die( $notice[0].'<p><strong>Success: You finished setup! You might need to login again.</strong></p>' );
 					} else {
 						echo $notice[0];
 					}

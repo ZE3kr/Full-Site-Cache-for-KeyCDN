@@ -54,6 +54,12 @@ if( PHP_VERSION_ID >= 50400 ){
 		add_filter( 'plugin_row_meta', 'fsckeycdn_meta', 91, 2 );
 		add_filter( 'plugin_action_links', 'fsckeycdn_add_settings', 91, 2 );
 		add_action( 'admin_menu', 'fsckeycdn_admin_menu', 5 );
+		/* Add rewrite action */
+		if(isset($fsckeycdn_x_pull_key) && isset($_SERVER['HTTP_X_PULL']) && $_SERVER['HTTP_X_PULL'] == $fsckeycdn_x_pull_key){
+			add_action( 'template_redirect','fsckeycdn_minify_html', 80 );
+		} elseif($fsckeycdn_realhost == $fsckeycdn_admin && !strstr($_SERVER['REQUEST_URI'],'/options-general.php')) {
+			add_action( 'wp_loaded','fsckeycdn_minify_html_admin', 99 );
+		}
 		if(fsckeycdn_status()){
 			add_action( 'init', 'fsckeycdn_register_publish_hooks', 99 );
 			add_action( 'init', 'fsckeycdn_purge_button', 5 );
@@ -72,12 +78,6 @@ if( PHP_VERSION_ID >= 50400 ){
 			add_action('fsckeycdn_purge_all_blog_hook', 'fsckeycdn_purge_all_blog');
 			add_action('fsckeycdn_purge_all_hook', 'fsckeycdn_purge_all');
 			add_action('fsckeycdn_purge_tag_hook', 'fsckeycdn_purge_tag');
-			/* Add rewrite action */
-			if($_SERVER['HTTP_X_PULL'] == $fsckeycdn_x_pull_key){
-				add_action( 'template_redirect','fsckeycdn_minify_html', 80 );
-			} elseif($fsckeycdn_realhost == $fsckeycdn_admin && !strstr($_SERVER['REQUEST_URI'],'/options-general.php')) {
-				add_action( 'wp_loaded','fsckeycdn_minify_html_admin', 99 );
-			}
 		}
 	} else {
 		function fsckeycdn_notice_meta($meta, $file) {
