@@ -3,10 +3,10 @@ Contributors: ze3kr, keycdn
 Donate link: https://tlo.xyz/donate/
 Tags: keycdn, cache, optimize, performance, speed, pagespeed, html, cdn, proxy
 Requires at least: 4.4
-Tested up to: 4.6
+Tested up to: 4.5.3
 Stable tag: trunk
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+License: GNU GPLv3
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 This plugin allows full site acceleration for WordPress with KeyCDN, which gives you the advantages of free SSL, HTTP/2, GZIP and more.
 

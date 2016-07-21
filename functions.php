@@ -121,7 +121,6 @@ function fsckeycdn_header(){
 			exit();
 		}
 	}
-	$post_ID = $GLOBALS['post']->ID;
 	if(is_home()||is_front_page()||is_search()||is_feed()){
 		header('Cache-Tag: wordpress archive-'.$fsckeycdn_blog_id.' index-'.$fsckeycdn_blog_id.' blog-'.$fsckeycdn_blog_id);
 	} elseif(is_search()) {
@@ -138,8 +137,8 @@ function fsckeycdn_header(){
 		header('Cache-Tag: wordpress archive-'.$fsckeycdn_blog_id.' blog-'.$fsckeycdn_blog_id);
 	} elseif(strstr($_SERVER['REQUEST_URI'],'/sitemap') && strstr($_SERVER['REQUEST_URI'],'.xml')) {
 		header('Cache-Tag: wordpress archive-'.$fsckeycdn_blog_id.' index-'.$fsckeycdn_blog_id.' blog-'.$fsckeycdn_blog_id);
-	} elseif($post_ID){
-		header('Cache-Tag: wordpress page-'.$fsckeycdn_blog_id.' id-'.$fsckeycdn_blog_id.'-'.$post_ID.' blog-'.$fsckeycdn_blog_id);
+	} elseif(isset($GLOBALS['post'])){
+		header('Cache-Tag: wordpress page-'.$fsckeycdn_blog_id.' id-'.$fsckeycdn_blog_id.'-'.$GLOBALS['post']->ID.' blog-'.$fsckeycdn_blog_id);
 	} else {
 		header('Cache-Tag: wordpress blog-'.$fsckeycdn_blog_id);
 	}
@@ -192,12 +191,9 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 		if(has_action('ce_clear_cache')){
 			do_action('ce_clear_cache');
 		}
-		wp_schedule_single_event(time(), 'fsckeycdn_purge_tag_hook', [$purge]);
-		wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$fsckeycdn_id.'.json',[
-			'method' => 'DELETE',
-			'body' => ['tags' => $purge],
-			'timeout' => 20,
-		]);
+		fsckeycdn_purge_tag( $purge );
+		// wp_clear_scheduled_hook('fsckeycdn_purge_tag_hook');
+		// wp_schedule_single_event(time(), 'fsckeycdn_purge_tag_hook', [$purge]);
 	}
 }
 
@@ -205,7 +201,7 @@ function fsckeycdn_purge_tag( $tag ) {
 	global $fsckeycdn_apikey, $fsckeycdn_blog_id;
 	$fsckeycdn_id = fsckeycdn_id();
 
-	wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$fsckeycdn_id.'.json',[
+	wp_remote_post('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$fsckeycdn_id.'.json',[
 		'method' => 'DELETE',
 		'body' => ['tags' => $tag],
 		'timeout' => 20,
@@ -213,7 +209,9 @@ function fsckeycdn_purge_tag( $tag ) {
 }
 
 function fsckeycdn_purge_id_cron( $post_ID ) {
-	wp_schedule_single_event(time(), 'fsckeycdn_purge_id_hook', [$post_ID]);
+	fsckeycdn_purge_id( $post_ID );
+	// wp_clear_scheduled_hook('fsckeycdn_purge_id_hook');
+	// wp_schedule_single_event(time(), 'fsckeycdn_purge_id_hook', [$post_ID]);
 }
 
 function fsckeycdn_purge_id( $post_ID ) {
@@ -227,7 +225,7 @@ function fsckeycdn_purge_id( $post_ID ) {
 
 	$purge = ['id-'.$fsckeycdn_blog_id.'-'.$post_ID];
 
-	wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
+	wp_remote_post('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
 		'method' => 'DELETE',
 		'body' => ['tags' => $purge],
 		'timeout' => 20,
@@ -235,14 +233,16 @@ function fsckeycdn_purge_id( $post_ID ) {
 }
 
 function fsckeycdn_purge_blog_cron() {
-	wp_schedule_single_event(time(), 'fsckeycdn_purge_blog_hook');
+	fsckeycdn_purge_blog();
+	// wp_clear_scheduled_hook('fsckeycdn_purge_blog_hook');
+	// wp_schedule_single_event(time(), 'fsckeycdn_purge_blog_hook');
 }
 
 function fsckeycdn_purge_blog() {
 	// Purge a specific blog.
 	global $fsckeycdn_apikey,$fsckeycdn_blog_id;
 	$zone = fsckeycdn_id();
-	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
+	return wp_remote_post('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
 		'method' => 'DELETE',
 		'body' => ['tags' => ['blog-'.$fsckeycdn_blog_id,],],
 		'timeout' => 20,
@@ -250,14 +250,16 @@ function fsckeycdn_purge_blog() {
 }
 
 function fsckeycdn_purge_all_blog_cron() {
-	wp_schedule_single_event(time(), 'fsckeycdn_purge_all_blog_hook');
+	fsckeycdn_purge_all_blog();
+	// wp_clear_scheduled_hook('fsckeycdn_purge_all_blog_hook');
+	// wp_schedule_single_event(time(), 'fsckeycdn_purge_all_blog_hook');
 }
-
+//print_r(fsckeycdn_purge_all_blog());
 function fsckeycdn_purge_all_blog() {
 	// Purge the whole blogs (for multisite Sub-directories install) but static file (CSS, JS, and media).
 	global $fsckeycdn_apikey;
 	$zone = fsckeycdn_id();
-	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
+	return wp_remote_post('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purgetag/'.$zone.'.json',[
 		'method' => 'DELETE',
 		'body' => ['tags' => ['wordpress',],],
 		'timeout' => 20,
@@ -265,7 +267,9 @@ function fsckeycdn_purge_all_blog() {
 }
 
 function fsckeycdn_purge_all_cron() {
-	wp_schedule_single_event(time(), 'fsckeycdn_purge_all_hook');
+	fsckeycdn_purge_all();
+	// wp_clear_scheduled_hook('fsckeycdn_purge_all_hook');
+	// wp_schedule_single_event(time(), 'fsckeycdn_purge_all_hook');
 }
 
 function fsckeycdn_purge_all() {
@@ -553,7 +557,7 @@ function fsckeycdn_control_options() {
 			</tbody></table>
 			<form method="post" action="options-general.php?page=full-site-cache-kc" style="display: inline;">
 				<input type="hidden" name="purge" value="everything" />
-				<input type="submit" value="Purge Everything" class="button" />
+				<input type="submit" value="Purge Everything" class="button" onclick='javascript:return confirm("Are you sure to Purge Everything? This will also purge the cache include static file (images, CSS, JS, etc.). You can use “Clear Cache” on the admin bar instead.");' />
 			</form>
 			<?php if(!$fsckeycdn_wp_config) { ?>
 				<form method="post" action="options-general.php?page=full-site-cache-kc" style="display: inline;">
@@ -843,7 +847,7 @@ require_once('<?php echo plugin_dir_path( FSKEYCDN__FILE__ );?>include.php'); //
 	<hr>
 	<a href="https://wordpress.org/support/plugin/full-site-cache-kc" class="button">Support Forum</a>
 	<?php if(isset($_SERVER['HTTP_CF_CONNECTING_IP'])){ ?>
-		<p>Detected you are using CloudFlare, <a target="_blank" href="https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare">you need to do some Extra Settings For CloudFlare after you actived KeyCDN.</a></p>
+		<p>Detected you are using CloudFlare, <a target="_blank" href="https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare">you need to do some Extra Settings For CloudFlare after you actived KeyCDN,</a> or you will get error when you trying to clear cache. If you already did this, just ignore this notice.</p>
 	<?php } ?>
 </div>
 <?php
