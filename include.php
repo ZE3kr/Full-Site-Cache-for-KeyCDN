@@ -1,6 +1,9 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+if(isset($_SERVER['HTTP_X_FORWARDED_HOST'])){
+	$_SERVER['HTTP_HOST'] = explode(',',$_SERVER['HTTP_X_FORWARDED_HOST'])[0];// Has better support when using a proxy server.
+}
 $fsckeycdn_realhost = $_SERVER['HTTP_HOST'];
 $fsckeycdn_rootdomain = implode('.',array_slice(explode('.',$_SERVER['HTTP_HOST']),-2));
 define('COOKIE_DOMAIN', $fsckeycdn_realhost);
@@ -214,9 +217,6 @@ function fsckeycdn_convert($s, $to=62) {
 	}
 	if(bindec($b)) $res = $dict{bindec($b)} . $res;
 	return $res;
-}
-if(isset($_SERVER['HTTP_X_FORWARDED_HOST'])){
-	$_SERVER['HTTP_HOST'] = explode(',',$_SERVER['HTTP_X_FORWARDED_HOST'])[0];// Has better support when using a proxy server.
 }
 if($fsckeycdn_variable_key){
 	$fsckeycdn_x_pull_key = substr(fsckeycdn_convert('f'.md5($fsckeycdn_x_pull_key.$_SERVER['HTTP_HOST'])),-15);
