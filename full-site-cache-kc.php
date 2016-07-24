@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Full Site Cache for KeyCDN
- * @version 2.2.0
+ * @version 2.1.6
  */
 /*
 Plugin Name: Full Site Cache for KeyCDN
 Plugin URI: https://wordpress.org/plugins/full-site-cache-kc/
 Description: This plugin allows full site acceleration for WordPress with KeyCDN, which gives you the advantages of free SSL, HTTP/2, GZIP and more.
 Author: ZE3kr
-Version: 2.2.0
+Version: 2.1.6
 Network: True
 Author URI: https://ze3kr.com/
 */

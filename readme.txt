@@ -370,10 +370,13 @@ Your API Key only store in the `wp-config.php` file, this plugin never store thi
 
 == Changelog ==
 
-= 2.2.0 =
+v 2.2.0 (unreleased)
 
 + Compatible with WordPress 4.6.
 + Use cron job to purge, so now it soesn't has delay to purge!
+
+v 2.1.6
+
 + Support to use KeyCDN on a non-www root domain for some DNS provider.
 + Fix a bug when using setup online.
 
