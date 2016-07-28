@@ -3,7 +3,7 @@ Contributors: ze3kr, keycdn
 Donate link: https://tlo.xyz/donate/
 Tags: keycdn, cache, optimize, performance, speed, pagespeed, html, cdn, proxy
 Requires at least: 4.4
-Tested up to: 4.5.3
+Tested up to: 4.6
 Stable tag: trunk
 License: GNU GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -370,15 +370,15 @@ Your API Key only store in the `wp-config.php` file, this plugin never store thi
 
 == Changelog ==
 
-v 2.2.0 (unreleased)
+= 2.2.0 (unreleased) =
 
-+ Compatible with WordPress 4.6.
 + Use cron job to purge, so now it soesn't has delay to purge!
 
-v 2.1.6
+= 2.1.6 =
 
 + Support to use KeyCDN on a non-www root domain for some DNS provider.
 + Fix a bug when using setup online.
++ Compatible with WordPress 4.6. (Thanks to the [#37456](https://core.trac.wordpress.org/ticket/37456) is fixed in WordPress core, this plugin is works in 4.6 now!)
 
 = 2.1.5.1 =
 

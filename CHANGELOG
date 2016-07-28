@@ -1,12 +1,12 @@
 v 2.2.0 (unreleased)
 
-+ Compatible with WordPress 4.6.
 + Use cron job to purge, so now it soesn't has delay to purge!
 
 v 2.1.6
 
 + Support to use KeyCDN on a non-www root domain for some DNS provider.
 + Fix a bug when using setup online.
++ Compatible with WordPress 4.6. (Thanks to the [#37456](https://core.trac.wordpress.org/ticket/37456) is fixed in WordPress core, this plugin is works in 4.6 now!)
 
 v 2.1.5.1
 
@@ -71,69 +71,3 @@ v 0.4.0
 
 + Disallow Direct File Access to plugin files.
 + Use Unique function (and/or define) names.
-
-=v Upgrade Notice=
-
-v 2.1.5.1
-
-Fix a Fatal error in some old PHP version. By the way, you must use this plugin on PHP 5.4 or higher, however, PHP 5.6 or higher are recommend.
-
-v 2.1.5
-
-Add Custom CDN Domain support, change the appearance of the settings page.
-
-v 2.1.4
-
-Fix bugs.
-
-v 2.1.3
-
-Add “Purge Everything” button. By default, the “Clear Cache” button on right top only purge the cache of HTML page of this blog but not include CSS, JS and media files. Add “Feedback & Support”, “Donate” and “Write a review” button. Add “Disable KeyCDN” for NOT manual setup. Fixed can’t rewrite URL of image correctly in some themes.
-
-v 2.1.2
-
-Fix URL rewrite for JS and URL Encoded. Fixed customize page preview.
-
-v 2.1.1
-
-Fix bugs, works better with `Cache Enabler`.
-
-v 2.1
-
-Change name `Full Site Cache Enabler for KeyCDN` to `Full Site Cache for KeyCDN`. Add support with `Cache Enabler`, now you can clear cache include `Cache Enabler - WordPress Cache` in the settings page of this plugin.
-
-v 2.0.0
-
-This is a big update, you can setup online very easily now.
-
-v 1.0.0
-
-Improve performance.
-
-You need to do something before update this plugin to v1.0.0.
-
-First, you need to change `$fsckeycdn_id` variable, like this:
-
-	$fsckeycdn_id v [
-		1> 10001,
-		2> 10002,
-		3> 10003,
-	]; // The key (1, 2, 3) is blog id. the value (10001, 10002, 10003) is KeyCDN Zone ID.
-
-Then, you need to change KeyCDN Zone settings, change `Expire (in minutes)` to 0.
-
-v 0.4.3
-
-IPv6 White list supported!
-
-v 0.4.2
-
-You can see admin bar when you enter admin page, can show post/page preview.
-
-v 0.4.1
-
-Just update readme.txt
-
-v 0.4.0
-
-This update changed some function name and variable name, you need to edit `wp-config.php`.
