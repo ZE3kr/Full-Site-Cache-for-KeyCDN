@@ -18,7 +18,7 @@ This plugin can help you to use KeyCDN on your WordPress, not only your Media an
 
 Installation online video, install it for less than 3 minutes, things become so easy:
 
-[youtube http://www.youtube.com/watch?v=7EiKx_WSesk]
+[youtube https://www.youtube.com/watch?v=cushugwf4Aw]
 
 This plugin only cache the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
 
@@ -61,7 +61,7 @@ Before use this plugin, you need to have a KeyCDN account. You can [sign up by t
 
 Installation online video, install it for less than 3 minutes, things become so easy:
 
-[youtube http://www.youtube.com/watch?v=7EiKx_WSesk]
+[youtube https://www.youtube.com/watch?v=cushugwf4Aw]
 
 Put the folder `full-site-cache-kc` in your server, to `wp-content/plugins/full-site-cache-kc/`, you can [download it at here](https://wordpress.org/plugins/full-site-cache-kc/).
 
