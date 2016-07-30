@@ -1,14 +1,14 @@
 <?php
 /**
  * @package Full Site Cache for KeyCDN
- * @version 2.1.6
+ * @version 2.2.0
  */
 /*
 Plugin Name: Full Site Cache for KeyCDN
 Plugin URI: https://wordpress.org/plugins/full-site-cache-kc/
 Description: This plugin allows full site acceleration for WordPress with KeyCDN, which gives you the advantages of free SSL, HTTP/2, GZIP and more.
 Author: ZE3kr
-Version: 2.1.6
+Version: 2.2.0
 Network: True
 Author URI: https://ze3kr.com/
 */
@@ -44,6 +44,10 @@ if(is_array($fsckeycdn_apikey)){
 	}
 }
 
+if((defined(DISABLE_WP_CRON) && DISABLE_WP_CRON) || (isset($fsckeycdn_no_cron) && $fsckeycdn_no_cron)){
+	define( 'FSKEYCDN_NO_CRON', true );
+}
+
 define( 'FSKEYCDN_DIR_NAME', plugin_basename( __FILE__ ) );
 define( 'FSKEYCDN__FILE__', __FILE__ );
 
@@ -59,12 +63,6 @@ if( PHP_VERSION_ID >= 50400 ){
 		add_action('fsckeycdn_purge_all_blog_hook', 'fsckeycdn_purge_all_blog');
 		add_action('fsckeycdn_purge_all_hook', 'fsckeycdn_purge_all');
 		add_action('fsckeycdn_purge_tag_hook', 'fsckeycdn_purge_tag', 10, 1);
-		/* Add rewrite action */
-		if(isset($fsckeycdn_x_pull_key) && isset($_SERVER['HTTP_X_PULL']) && $_SERVER['HTTP_X_PULL'] == $fsckeycdn_x_pull_key){
-			add_action( 'template_redirect','fsckeycdn_minify_html', 80 );
-		} elseif($fsckeycdn_realhost == $fsckeycdn_admin && !strstr($_SERVER['REQUEST_URI'],'/options-general.php')) {
-			add_action( 'wp_loaded','fsckeycdn_minify_html_admin', 99 );
-		}
 		if(fsckeycdn_status()){
 			add_action( 'init', 'fsckeycdn_register_publish_hooks', 99 );
 			add_action( 'init', 'fsckeycdn_purge_button', 5 );
@@ -77,6 +75,12 @@ if( PHP_VERSION_ID >= 50400 ){
 			add_action( 'trashed_post', 'fsckeycdn_purge_blog_cron', 91 );
 			add_action( 'switch_theme', 'fsckeycdn_purge_blog_cron', 91 );
 			add_action( '_core_updated_successfully', 'fsckeycdn_purge_all_cron', 91 );
+		}
+		/* Add rewrite action */
+		if(isset($fsckeycdn_x_pull_key) && isset($_SERVER['HTTP_X_PULL']) && $_SERVER['HTTP_X_PULL'] == $fsckeycdn_x_pull_key){
+			add_action( 'template_redirect','fsckeycdn_minify_html', 80 );
+		} elseif($fsckeycdn_realhost == $fsckeycdn_admin && !strstr($_SERVER['REQUEST_URI'],'/options-general.php')) {
+			add_action( 'wp_loaded','fsckeycdn_minify_html_admin', 99 );
 		}
 	} else {
 		function fsckeycdn_notice_meta($meta, $file) {

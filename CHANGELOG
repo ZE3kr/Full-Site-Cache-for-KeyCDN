@@ -1,6 +1,7 @@
-v 2.2.0 (unreleased)
+v 2.2.0
 
-+ Use cron job to purge, so now it soesn't has delay to purge!
++ Use cron job to purge, so now it doesn't has delay to purge!
++ Add Clear Cache button in settings page.
 
 v 2.1.6
 

@@ -4,7 +4,7 @@ Donate link: https://tlo.xyz/donate/
 Tags: keycdn, cache, optimize, performance, speed, pagespeed, html, cdn, proxy
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: trunk
+Stable tag: 2.2.0
 License: GNU GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,6 +15,10 @@ This plugin allows full site acceleration for WordPress with KeyCDN, which gives
 > NOTE: This is an **unofficial** plugin.
 
 This plugin can help you to use KeyCDN on your WordPress, not only your Media and CSS, but also all HTML page. It is much faster than other cache plugins because it can cache the content on the [KeyCDN’s Edge Servers](https://www.keycdn.com/network?a=7126), which are close to the end-user. This plugins can automatically purge the page (and also the homepage, archive page, tag page, category page, feed, sitemap) when you publish a page or post.
+
+Installation online video, install it for less than 3 minutes, things become so easy:
+
+[youtube http://www.youtube.com/watch?v=7EiKx_WSesk]
 
 This plugin only cache the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
 
@@ -54,6 +58,10 @@ However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is a a
 == Installation ==
 
 Before use this plugin, you need to have a KeyCDN account. You can [sign up by this link](https://www.keycdn.com/?a=7126), and you can get $10 free credit, that is included 250GB web traffic, it's enough for your test, and can use for a long time (if you don't have too much web traffic).
+
+Installation online video, install it for less than 3 minutes, things become so easy:
+
+[youtube http://www.youtube.com/watch?v=7EiKx_WSesk]
 
 Put the folder `full-site-cache-kc` in your server, to `wp-content/plugins/full-site-cache-kc/`, you can [download it at here](https://wordpress.org/plugins/full-site-cache-kc/).
 
@@ -348,6 +356,15 @@ Because to use KeyCDN, it need to set a CNAME record on the domain. But CNAME re
 However, you are still able to use root domain if your DNS provider supports ANAME record (or CNAME Flattening), for example, CloudFlare supports this feature, so you can set a CNAME record on your root domain and won't get any error! The version 2.2.0 brings this feature, you need to add this line to your `wp-config.php`:
 
 	$fsckeycdn_root_domain_setup = true;
+= The cache is not cleared when I updated a post/page =
+
+If you are using CloudFlare proxy for the `wp-admin` domain, you need [you need to do some Extra Settings For CloudFlare after you actived KeyCDN](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare), after that, the cache will be cleared correctly, if it still not work, try below:
+
+We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
+
+`$fsckeycdn_no_cron = true;`
+
+In my test, this error (cron job not work) is only appears when I use CloudFlare’s Universal SSL and using a old operating system that the `curl` doesn’t support ECDSA/ECC SSL. I suggest you to use a up-to-date operating system.
 
 = Why this plugin need to change the Siteurl? =
 
@@ -370,9 +387,10 @@ Your API Key only store in the `wp-config.php` file, this plugin never store thi
 
 == Changelog ==
 
-= 2.2.0 (unreleased) =
+= 2.2.0 =
 
-+ Use cron job to purge, so now it soesn't has delay to purge!
++ Use cron job to purge, so now it doesn't has delay to purge!
++ Add Clear Cache button in settings page.
 
 = 2.1.6 =
 
@@ -445,6 +463,14 @@ Just update readme.txt
 + Use Unique function (and/or define) names.
 
 == Upgrade Notice ==
+
+= 2.2.0 =
+
+We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
+
+`$fsckeycdn_no_cron = true;`
+
+In my test, this error is only appears when I use CloudFlare’s Universal SSL and using a old operating system that the `curl` doesn’t support ECDSA/ECC SSL. I suggest you to use a up-to-date operating system.
 
 = 2.1.5.1 =
 

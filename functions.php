@@ -1,4 +1,6 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 function fsckeycdn_id(){
 	/* A function to return settings */
 	global $fsckeycdn_id,$fsckeycdn_blog_id;
@@ -191,9 +193,12 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 		if(has_action('ce_clear_cache')){
 			do_action('ce_clear_cache');
 		}
-		fsckeycdn_purge_tag( $purge );
-		// wp_clear_scheduled_hook('fsckeycdn_purge_tag_hook');
-		// wp_schedule_single_event(time(), 'fsckeycdn_purge_tag_hook', [$purge]);
+		if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
+			fsckeycdn_purge_tag( $purge );
+		} else {
+			wp_clear_scheduled_hook('fsckeycdn_purge_tag_hook');
+			wp_schedule_single_event(time(), 'fsckeycdn_purge_tag_hook', [$purge]);
+		}
 	}
 }
 
@@ -209,9 +214,12 @@ function fsckeycdn_purge_tag( $tag ) {
 }
 
 function fsckeycdn_purge_id_cron( $post_ID ) {
-	fsckeycdn_purge_id( $post_ID );
-	// wp_clear_scheduled_hook('fsckeycdn_purge_id_hook');
-	// wp_schedule_single_event(time(), 'fsckeycdn_purge_id_hook', [$post_ID]);
+	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
+		fsckeycdn_purge_id( $post_ID );
+	} else {
+		wp_clear_scheduled_hook('fsckeycdn_purge_id_hook');
+		wp_schedule_single_event(time(), 'fsckeycdn_purge_id_hook', [$post_ID]);
+	}
 }
 
 function fsckeycdn_purge_id( $post_ID ) {
@@ -233,9 +241,12 @@ function fsckeycdn_purge_id( $post_ID ) {
 }
 
 function fsckeycdn_purge_blog_cron() {
-	fsckeycdn_purge_blog();
-	// wp_clear_scheduled_hook('fsckeycdn_purge_blog_hook');
-	// wp_schedule_single_event(time(), 'fsckeycdn_purge_blog_hook');
+	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
+		fsckeycdn_purge_blog();
+	} else {
+		wp_clear_scheduled_hook('fsckeycdn_purge_blog_hook');
+		wp_schedule_single_event(time(), 'fsckeycdn_purge_blog_hook');
+	}
 }
 
 function fsckeycdn_purge_blog() {
@@ -250,11 +261,14 @@ function fsckeycdn_purge_blog() {
 }
 
 function fsckeycdn_purge_all_blog_cron() {
-	fsckeycdn_purge_all_blog();
-	// wp_clear_scheduled_hook('fsckeycdn_purge_all_blog_hook');
-	// wp_schedule_single_event(time(), 'fsckeycdn_purge_all_blog_hook');
+	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
+		fsckeycdn_purge_all_blog();
+	} else {
+		wp_clear_scheduled_hook('fsckeycdn_purge_all_blog_hook');
+		wp_schedule_single_event(time(), 'fsckeycdn_purge_all_blog_hook');
+	}
 }
-//print_r(fsckeycdn_purge_all_blog());
+
 function fsckeycdn_purge_all_blog() {
 	// Purge the whole blogs (for multisite Sub-directories install) but static file (CSS, JS, and media).
 	global $fsckeycdn_apikey;
@@ -267,9 +281,12 @@ function fsckeycdn_purge_all_blog() {
 }
 
 function fsckeycdn_purge_all_cron() {
-	fsckeycdn_purge_all();
-	// wp_clear_scheduled_hook('fsckeycdn_purge_all_hook');
-	// wp_schedule_single_event(time(), 'fsckeycdn_purge_all_hook');
+	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
+		fsckeycdn_purge_all();
+	} else {
+		wp_clear_scheduled_hook('fsckeycdn_purge_all_hook');
+		wp_schedule_single_event(time(), 'fsckeycdn_purge_all_hook');
+	}
 }
 
 function fsckeycdn_purge_all() {
@@ -555,9 +572,12 @@ function fsckeycdn_control_options() {
 					<td><code><?php echo $fsckeycdn_x_pull_key;?></code></td>
 				</tr>
 			</tbody></table>
+		<?php } ?>
+		<a href="<?php echo wp_nonce_url( add_query_arg('_cache', 'clear'), '_cache__clear_nonce'); ?>" class="button button-primary">Clear Cache</a>
+		<?php if(is_super_admin()){ ?>
 			<form method="post" action="options-general.php?page=full-site-cache-kc" style="display: inline;">
 				<input type="hidden" name="purge" value="everything" />
-				<input type="submit" value="Purge Everything" class="button" onclick='javascript:return confirm("Are you sure to Purge Everything? This will also purge the cache include static file (images, CSS, JS, etc.). You can use “Clear Cache” on the admin bar instead.");' />
+				<input type="submit" value="Purge Everything" class="button" onclick='javascript:return confirm("Are you sure to Purge Everything? This will also purge the cache include static file (images, CSS, JS, etc.). You can use “Clear Cache” instead.");' />
 			</form>
 			<?php if(!$fsckeycdn_wp_config) { ?>
 				<form method="post" action="options-general.php?page=full-site-cache-kc" style="display: inline;">
