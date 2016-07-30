@@ -16,9 +16,11 @@ This plugin allows full site acceleration for WordPress with KeyCDN, which gives
 
 This plugin can help you to use KeyCDN on your WordPress, not only your Media and CSS, but also all HTML page. It is much faster than other cache plugins because it can cache the content on the [KeyCDN’s Edge Servers](https://www.keycdn.com/network?a=7126), which are close to the end-user. This plugins can automatically purge the page (and also the homepage, archive page, tag page, category page, feed, sitemap) when you publish a page or post.
 
-Installation online video, install it for less than 3 minutes, things become so easy:
+Video - install and enable it within 3 minutes:
 
 [youtube https://www.youtube.com/watch?v=cushugwf4Aw]
+
+The website of this plugin (also is an example website using this plugin): [keycdn.tlo.one](https://keycdn.tlo.one/)
 
 This plugin only cache the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
 
@@ -59,7 +61,7 @@ However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is a a
 
 Before use this plugin, you need to have a KeyCDN account. You can [sign up by this link](https://www.keycdn.com/?a=7126), and you can get $10 free credit, that is included 250GB web traffic, it's enough for your test, and can use for a long time (if you don't have too much web traffic).
 
-Installation online video, install it for less than 3 minutes, things become so easy:
+Video - install and enable it within 3 minutes:
 
 [youtube https://www.youtube.com/watch?v=cushugwf4Aw]
 
@@ -356,11 +358,12 @@ Because to use KeyCDN, it need to set a CNAME record on the domain. But CNAME re
 However, you are still able to use root domain if your DNS provider supports ANAME record (or CNAME Flattening), for example, CloudFlare supports this feature, so you can set a CNAME record on your root domain and won't get any error! The version 2.2.0 brings this feature, you need to add this line to your `wp-config.php`:
 
 	$fsckeycdn_root_domain_setup = true;
+
 = The cache is not cleared when I updated a post/page =
 
-If you are using CloudFlare proxy for the `wp-admin` domain, you need [you need to do some Extra Settings For CloudFlare after you actived KeyCDN](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare), after that, the cache will be cleared correctly, if it still not work, try below:
+If you are using CloudFlare proxy for the `wp-admin` domain, you need [to do some Extra Settings For CloudFlare after you actived KeyCDN](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare), after that, the cache will be cleared correctly, if it still not work, try below:
 
-We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
+We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared in some very specific environment, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
 
 `$fsckeycdn_no_cron = true;`
 
@@ -466,7 +469,7 @@ Just update readme.txt
 
 = 2.2.0 =
 
-We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
+We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared in some very specific environment, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
 
 `$fsckeycdn_no_cron = true;`
 
