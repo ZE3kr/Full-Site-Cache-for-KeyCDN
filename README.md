@@ -8,7 +8,7 @@ Make all HTML page on CDN cache, optimize your website speed. Make your site sup
 
 The website of this plugin (also is an example website using this plugin): [keycdn.tlo.one](https://keycdn.tlo.one/)
 
-This plugin can help you to use KeyCDN on your WordPress, not only your Media and CSS, but also all HTML page. This plugins can automatically purge the page that need to update, when you publish a page or post.
+This plugin can help you to use KeyCDN on your WordPress, not only your Media and CSS, but also all HTML page. This plugin can automatically purge the page that needs to update when you publish a page or post.
 
 Require:
 
