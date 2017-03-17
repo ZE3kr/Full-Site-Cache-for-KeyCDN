@@ -1,19 +1,31 @@
 <?php
 /**
  * @package Full Site Cache for KeyCDN
- * @version 2.2.0
+ * @version 2.2.1
+ * @author ze3kr <ze3kr@icloud.com>
+ * @link https://wordpress.org/plugins/full-site-cache-kc/
  */
 /*
 Plugin Name: Full Site Cache for KeyCDN
-Plugin URI: https://keycdn.tlo.one/
+Plugin URI: https://wordpress.org/plugins/full-site-cache-kc/
 Description: This plugin allows full site acceleration for WordPress with KeyCDN, which gives you the advantages of free SSL, HTTP/2, GZIP and more.
 Author: ZE3kr
-Version: 2.2.0
+Version: 2.2.1
 Network: True
 Author URI: https://ze3kr.com/
 */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
+
+/**
+ * Set up for some necessary variable
+ *
+ * @param string $_SERVER['HTTP_HOST']   WordPress Home domain.
+ * @param string $fsckeycdn_realhost     Current domain
+ * @param string $fsckeycdn_admin        The WordPress Admin domain, e.g. for www.example.com or example.com, this is wp-admin.example.com, and for sub.example.com, this is wp-admin-sub.example.com
+ * @param string $fsckeycdn_scheme       The scheme for WordPress Admin URL, e.g. for https://wp-admin.example.com this is https
+ * @param string $fsckeycdn_rootdomain   The scheme for WordPress Admin URL, e.g. for https://wp-admin.example.com this is https
+ */
 if(!defined('FSCKEYCDN_SETUP')){
 	$fsckeycdn_realhost = $_SERVER['HTTP_HOST'];
 	if(is_ssl()){
@@ -34,6 +46,9 @@ if(!defined('FSCKEYCDN_SETUP')){
 	}
 }
 
+/**
+ * Set up for $fsckeycdn_blog_id, and get the $fsckeycdn_apikey for multisite set up.
+ */
 $fsckeycdn_blog_id = get_current_blog_id();
 
 if(is_array($fsckeycdn_apikey)){
@@ -44,6 +59,9 @@ if(is_array($fsckeycdn_apikey)){
 	}
 }
 
+/**
+ * Check if the WP_CRON is disabled. If is disabled, do not use async.
+ */
 if((defined(DISABLE_WP_CRON) && DISABLE_WP_CRON) || (isset($fsckeycdn_no_cron) && $fsckeycdn_no_cron)){
 	define( 'FSKEYCDN_NO_CRON', true );
 }
@@ -51,6 +69,9 @@ if((defined(DISABLE_WP_CRON) && DISABLE_WP_CRON) || (isset($fsckeycdn_no_cron) &
 define( 'FSKEYCDN_DIR_NAME', plugin_basename( __FILE__ ) );
 define( 'FSKEYCDN__FILE__', __FILE__ );
 
+/**
+ * Check the PHP version. If is lower than this version, give a upgrade notice.
+ */
 if( PHP_VERSION_ID >= 50400 ){
 	$fskeycdn_path = dirname(__FILE__) . '/functions.php';
 	if( file_exists( $fskeycdn_path ) ){
@@ -64,6 +85,9 @@ if( PHP_VERSION_ID >= 50400 ){
 		add_action('fsckeycdn_purge_all_hook', 'fsckeycdn_purge_all');
 		add_action('fsckeycdn_purge_tag_hook', 'fsckeycdn_purge_tag', 10, 1);
 		if(fsckeycdn_status()){
+			/**
+			 * Add these actions only if this plugins has set up.
+			 */
 			add_action( 'init', 'fsckeycdn_register_publish_hooks', 99 );
 			add_action( 'init', 'fsckeycdn_purge_button', 5 );
 			add_action( 'wp', 'fsckeycdn_header' );

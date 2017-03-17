@@ -1,11 +1,22 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+/**
+ * Set up for some necessary variable
+ *
+ * @param string $_SERVER['HTTP_HOST']   WordPress Home domain.
+ * @param string $fsckeycdn_realhost     Current domain
+ * @param string $fsckeycdn_admin        The WordPress Admin domain, e.g. for www.example.com or example.com, this is wp-admin.example.com, and for sub.example.com, this is wp-admin-sub.example.com
+ * @param string $fsckeycdn_scheme       The scheme for WordPress Admin URL, e.g. for https://wp-admin.example.com this is https
+ * @param string $fsckeycdn_rootdomain   The scheme for WordPress Admin URL, e.g. for https://wp-admin.example.com this is https
+ */
+
 if(isset($_SERVER['HTTP_X_FORWARDED_HOST'])){
 	$_SERVER['HTTP_HOST'] = explode(',',$_SERVER['HTTP_X_FORWARDED_HOST'])[0];// Has better support when using a proxy server.
 }
 $fsckeycdn_realhost = $_SERVER['HTTP_HOST'];
 $fsckeycdn_rootdomain = implode('.',array_slice(explode('.',$_SERVER['HTTP_HOST']),-2));
+
 define('COOKIE_DOMAIN', $fsckeycdn_realhost);
 define('FSCKEYCDN_SETUP', true);
 if($fsckeycdn_realhost != $fsckeycdn_rootdomain){

@@ -1,8 +1,10 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+/**
+ * @return string|bool KeyCDN Zone ID, false when no Zone ID is set.
+ */
 function fsckeycdn_id(){
-	/* A function to return settings */
 	global $fsckeycdn_id,$fsckeycdn_blog_id;
 	if(isset($fsckeycdn_id)){
 		if(is_array($fsckeycdn_id) && isset($fsckeycdn_id[$fsckeycdn_blog_id])){
@@ -16,6 +18,9 @@ function fsckeycdn_id(){
 	return false;
 }
 
+/**
+ * @return int Plugin clear cache behaviour, 1 is default, explained in readme.txt
+ */
 function fsckeycdn_purge(){
 	/* A function to return settings */
 	global $fsckeycdn_purge,$fsckeycdn_blog_id;
@@ -30,6 +35,9 @@ function fsckeycdn_purge(){
 	}
 }
 
+/**
+ * @return bool return true when this plugin has set up.
+ */
 function fsckeycdn_status(){
 	/* A function to return settings */
 	global $fsckeycdn_id,$fsckeycdn_apikey,$fsckeycdn_blog_id;
@@ -46,6 +54,9 @@ function fsckeycdn_status(){
 	}
 }
 
+/**
+ * @return bool Check if Zone ID is set in wp-config.php
+ */
 function fsckeycdn_wp_config(){
 	/* A function to return settings */
 	global $fsckeycdn_id;
@@ -56,6 +67,9 @@ function fsckeycdn_wp_config(){
 	}
 }
 
+/**
+ * @return bool Check if a zone is added in KeyCDN
+ */
 function fsckeycdn_check($zone,$name,$key){
 	/* A function to return settings */
 	foreach($zone as $each){
@@ -66,6 +80,9 @@ function fsckeycdn_check($zone,$name,$key){
 	return false;
 }
 
+/**
+ * Compatible to the plugin: Cache Enabler by KeyCDN ( https://wordpress.org/plugins/cache-enabler/ ).
+ */
 function fsckeycdn_check_ce(){
 	/* A function to return settings */
 	global $fsckeycdn_ce;
@@ -82,6 +99,9 @@ function fsckeycdn_check_ce(){
 	}
 }
 
+/**
+ * Register publish hooks for all post type.
+ */
 function fsckeycdn_register_publish_hooks(){
 	// get post types
 	$post_types = get_post_types(
@@ -100,10 +120,14 @@ function fsckeycdn_register_publish_hooks(){
 	}
 }
 
+/**
+ * Add meta link in plugin list page.
+ */
 function fsckeycdn_meta($meta, $file) {
 	$fsckeycdn_status = fsckeycdn_status();
 	if ($file == FSKEYCDN_DIR_NAME) {
-		$meta[] = '<a href="mailto:support@tlo.xyz" target="_blank">Feedback &amp; Support</a>';
+		$meta[] = '<a href="https://wordpress.org/support/plugin/full-site-cache-kc" target="_blank">Support Forum</a>';
+		$meta[] = '<a href="https://wordpress.org/support/topic/contribute-to-this-plugin/" target="_blank">Contribute to this plugin</a>';
 		if( $fsckeycdn_status ){
 			$meta[] = '<span style="color:green">Setup Success</span>';
 		} else {
@@ -113,6 +137,10 @@ function fsckeycdn_meta($meta, $file) {
 	return $meta;
 }
 
+/**
+ * Add headers on home page. Block not logged in to access the WordPress Admin, e.g. wp-admin.example.com
+ * Also add Cache-Tag headers
+ */
 function fsckeycdn_header(){
 	global $fsckeycdn_x_pull_key, $fsckeycdn_scheme, $fsckeycdn_realhost, $fsckeycdn_blog_id,$fsckeycdn_admin;
 	/* Set redirect if user not logged in */
@@ -146,6 +174,12 @@ function fsckeycdn_header(){
 	}
 }
 
+/**
+ * Clear cache for a newly published post ID
+ *
+ * @param int     $post_ID
+ * @param WP_Post $post
+ */
 function fsckeycdn_delete_purge( $post_ID, $post ) {
 	global $fsckeycdn_apikey, $fsckeycdn_blog_id, $fsckeycdn_ce;
 	$fsckeycdn_purge = fsckeycdn_purge();
@@ -161,6 +195,7 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 		return;
 	}
 
+	// Check the behaviour in Cache Enabler by KeyCDN ( https://wordpress.org/plugins/cache-enabler/ ).
 	if($fsckeycdn_ce){
 		if( isset($_POST['_clear_post_cache_on_update']) && !(int)$_POST['_clear_post_cache_on_update'] ){
 			$fsckeycdn_purge = 2;
@@ -170,6 +205,7 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 	}
 
 	$purge = false;
+	// Different tags for different behaviour, explained in readme.txt
 	if($fsckeycdn_purge == 1){
 		$purge = ['archive-'.$fsckeycdn_blog_id, 'id-'.$fsckeycdn_blog_id.'-'.$post_ID];
 	} elseif($fsckeycdn_purge == 2) {
@@ -196,12 +232,18 @@ function fsckeycdn_delete_purge( $post_ID, $post ) {
 		if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
 			fsckeycdn_purge_tag( $purge );
 		} else {
+			// Use async
 			wp_clear_scheduled_hook('fsckeycdn_purge_tag_hook');
 			wp_schedule_single_event(time(), 'fsckeycdn_purge_tag_hook', [$purge]);
 		}
 	}
 }
 
+/**
+ * Do the chear cache by tag action
+ *
+ * @param array $tag
+ */
 function fsckeycdn_purge_tag( $tag ) {
 	global $fsckeycdn_apikey, $fsckeycdn_blog_id;
 	$fsckeycdn_id = fsckeycdn_id();
@@ -213,6 +255,11 @@ function fsckeycdn_purge_tag( $tag ) {
 	]);
 }
 
+/**
+ * Just a cron job function
+ *
+ * @param int     $post_ID
+ */
 function fsckeycdn_purge_id_cron( $post_ID ) {
 	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
 		fsckeycdn_purge_id( $post_ID );
@@ -222,6 +269,11 @@ function fsckeycdn_purge_id_cron( $post_ID ) {
 	}
 }
 
+/**
+ * Chear cache for a newly updated post ID
+ *
+ * @param int     $post_ID
+ */
 function fsckeycdn_purge_id( $post_ID ) {
 	global $fsckeycdn_apikey, $fsckeycdn_blog_id;
 	$zone = fsckeycdn_id();
@@ -240,6 +292,9 @@ function fsckeycdn_purge_id( $post_ID ) {
 	]);
 }
 
+/**
+ * Just a cron job function
+ */
 function fsckeycdn_purge_blog_cron() {
 	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
 		fsckeycdn_purge_blog();
@@ -249,6 +304,9 @@ function fsckeycdn_purge_blog_cron() {
 	}
 }
 
+/**
+ * Chear cache for all pages
+ */
 function fsckeycdn_purge_blog() {
 	// Purge a specific blog.
 	global $fsckeycdn_apikey,$fsckeycdn_blog_id;
@@ -260,6 +318,9 @@ function fsckeycdn_purge_blog() {
 	]);
 }
 
+/**
+ * Just a cron job function
+ */
 function fsckeycdn_purge_all_blog_cron() {
 	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
 		fsckeycdn_purge_all_blog();
@@ -269,6 +330,9 @@ function fsckeycdn_purge_all_blog_cron() {
 	}
 }
 
+/**
+ * Chear cache for all pages (for multisite Sub-directories install)
+ */
 function fsckeycdn_purge_all_blog() {
 	// Purge the whole blogs (for multisite Sub-directories install) but static file (CSS, JS, and media).
 	global $fsckeycdn_apikey;
@@ -280,6 +344,9 @@ function fsckeycdn_purge_all_blog() {
 	]);
 }
 
+/**
+ * Just a cron job function
+ */
 function fsckeycdn_purge_all_cron() {
 	if(defined(FSKEYCDN_NO_CRON) && FSKEYCDN_NO_CRON){
 		fsckeycdn_purge_all();
@@ -289,13 +356,19 @@ function fsckeycdn_purge_all_cron() {
 	}
 }
 
+/**
+ * Chear cache for all pages including static file.
+ */
 function fsckeycdn_purge_all() {
-	// Purge the whole blog include static file.
+	// Purge the whole blog including static file.
 	global $fsckeycdn_apikey;
 	$zone = fsckeycdn_id();
 	return wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones/purge/'.$zone.'.json',['method' => 'GET','timeout' => 20,]);
 }
 
+/**
+ * Mark as post updated when there's a comment changed status (e.g. deleted)
+ */
 function fsckeycdn_change_comment($after_status, $before_status, $comment) {
 	global $fsckeycdn_ce;
 	// check if changes occured
@@ -308,6 +381,9 @@ function fsckeycdn_change_comment($after_status, $before_status, $comment) {
 	}
 }
 
+/**
+ * Mark as post updated when there's a comment changed
+ */
 function fsckeycdn_edit_comment($id) {
 	global $fsckeycdn_ce;
 	// clear complete cache if option enabled
@@ -320,6 +396,9 @@ function fsckeycdn_edit_comment($id) {
 	}
 }
 
+/**
+ * Mark as post updated when there's new comment
+ */
 function fsckeycdn_new_comment($approved, $comment) {
 	global $fsckeycdn_ce;
 	// check if comment is approved
@@ -334,6 +413,9 @@ function fsckeycdn_new_comment($approved, $comment) {
 	return $approved;
 }
 
+/**
+ * Rewrite URLs for Admin page, works well with live preview, e.g. https://wp-admin.example.com/wp-admin/
+ */
 function fsckeycdn_minify_html_admin(){
 	// Set URL rewrite for admin page.
 	ob_start('fsckeycdn_compress_admin');
@@ -347,6 +429,9 @@ function fsckeycdn_compress_admin($html){
 	return $html;
 }
 
+/**
+ * Rewrite URLs for Home page, e.g. https://www.example.com/
+ */
 function fsckeycdn_minify_html(){
 	// Set URL rewrite for KeyCDN page.
 	ob_start('fsckeycdn_compress');
@@ -549,12 +634,12 @@ function fsckeycdn_control_options() {
 		'cachehostheader' => 'disabled',
 		'cachecookies' => 'enabled',
 	];
-	if($fsckeycdn_status && ((isset($_GET['setup']) && $_GET['setup'] != 'yes') || !isset($_GET['setup']))){
-		if(isset($_POST['resetzone']) && $_POST['resetzone'] == 'everything' && is_super_admin() && !$fsckeycdn_wp_config){
+	if($fsckeycdn_status && ((isset($_GET['setup']) && $_GET['setup'] != 'yes') || !isset($_GET['setup']))){ // If has already set up everything
+		if(isset($_POST['resetzone']) && $_POST['resetzone'] == 'everything' && is_super_admin() && !$fsckeycdn_wp_config){ // If submitted reset
 			delete_option( 'fsckeycdn_id' );
 			wp_die( '<div id="setting-error-settings_updated" class="updated settings-error notice"><p><strong>Success: KeyCDN disabled for this site successfully, but not fully disabled. <a href="https://wordpress.org/plugins/full-site-cache-kc/other_notes/#How-to-fully-disable-this-plugin" target="_blank">How to fully disable it?</a></strong></p></div>' );
 		}
-		if(isset($_POST['purge']) && $_POST['purge'] == 'everything' && is_super_admin()){
+		if(isset($_POST['purge']) && $_POST['purge'] == 'everything' && is_super_admin()){ // If submitted purge everything
 			if(has_action('ce_clear_cache')){
 				do_action('ce_clear_cache');
 			}
@@ -565,7 +650,7 @@ function fsckeycdn_control_options() {
 			$purge_return = json_decode($purge_return['body'], true);
 			echo fsckeycdn_return_notice($purge_return,true)[0];
 		}
-		if(is_super_admin()){ ?>
+		if(is_super_admin()){ // Show X-Pull Key for Admin ?>
 			<table class="form-table"><tbody>
 				<tr>
 					<th scope="row">X-Pull Key</th>
@@ -595,28 +680,28 @@ function fsckeycdn_control_options() {
 			<p>To improve performance, pleace disable all others cache plugin and use <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a> instead (Optional), that plugin works perfect with this plugin, and you can change cache the behavior settings. <a href="https://wordpress.org/plugins/full-site-cache-kc/other_notes/#About-%E2%80%9CCache-Enabler%E2%80%9D-plugin" target="_blank">Learn more…</a></p>
 			<?php }
 		}
-	} elseif(isset($_GET['setup']) && $_GET['setup'] == 'yes' && !$fsckeycdn_wp_config) {
+	} elseif(isset($_GET['setup']) && $_GET['setup'] == 'yes' && !$fsckeycdn_wp_config) { // If has not set up but in a online set up page
 		if(!is_super_admin()){
 			wp_die( 'KeyCDN is disabled, only super admin can enable KeyCDN.' );
 		}
-		if(!($fsckeycdn_realhost == $fsckeycdn_admin && isset($fsckeycdn_x_pull_key) && isset($fsckeycdn_apikey) && isset($fsckeycdn_user_id) )) {
+		if(!($fsckeycdn_realhost == $fsckeycdn_admin && isset($fsckeycdn_x_pull_key) && isset($fsckeycdn_apikey) && isset($fsckeycdn_user_id) )) { // If is submitted the data
 			$check_settings = false;
 			if($_GET['login']=='yes'){
 				$check_settings = true;
 			}
 			if($_POST['fsckeycdn_apikey'] && is_numeric($_POST['fsckeycdn_user_id']) && $_POST['fsckeycdn_default_sslcert']){
-				$check_return = wp_remote_request('https://'.$_POST['fsckeycdn_apikey'].'@api.keycdn.com/zones.json',['method' => 'GET','timeout' => 20,]);
+				$check_return = wp_remote_request('https://'.$_POST['fsckeycdn_apikey'].'@api.keycdn.com/zones.json',['method' => 'GET','timeout' => 20,]); // Listed the zone to check if API key works
 				if(is_wp_error( $check_return )){
 					wp_die( $check_return->get_error_message() );
 				}
 				$check_return = json_decode($check_return['body'],true);
-				if($check_return['status'] == 'success'){
+				if($check_return['status'] == 'success'){ // If API key work
 					$check_settings = true;
 				} else {
 					echo fsckeycdn_return_notice($check_return,true)[0];
 				}
 			}
-			if(!$check_settings){
+			if(!$check_settings){ // If API key does not work
 			?>
 				<p>Before that, you need to have a KeyCDN account, if you didn’t have one, you can <a target="_blank" href="https://app.keycdn.com/signup?a=7126">sign up by this link</a> and get 250GB of free traffic.</p>
 				<p>If you already created a KeyCDN Zone for this plugin, pleace delete it. This plugin will automatically create one for you.</p>
@@ -652,7 +737,8 @@ function fsckeycdn_control_options() {
 			<?php
 				wp_die();
 			}
-			$new_admin_page = $fsckeycdn_scheme.'://'.$fsckeycdn_admin.'/wp-login.php?redirect_to='.urlencode($_SERVER['REQUEST_URI']);
+			$new_admin_page = $fsckeycdn_scheme.'://'.$fsckeycdn_admin.'/wp-login.php?redirect_to='.urlencode($_SERVER['REQUEST_URI']); // The predefined Admin page URL
+			// If API key work, showing this
 			?>
 			<h3>Enabling the KeyCDN</h3>
 			<p>Complete the following steps to enable the features for KeyCDN.</p>
@@ -688,12 +774,13 @@ require_once('<?php echo plugin_dir_path( FSKEYCDN__FILE__ );?>include.php');
 			<p>Once you complete these steps, your KeyCDN is configured but not enabled. You will have to log in again, and then go to the next step.</p>
 			<a target="_blank" class="button-primary" href="<?php echo $new_admin_page;?>">Log In</a>
 		<?php
-		} else {
+		} else { // If is in the predefined Admin page
 			update_option( 'siteurl', $fsckeycdn_scheme.'://'.$fsckeycdn_realhost );
 			$zone_check['id'] = get_option( 'fsckeycdn_id', false, false );
 			if($zone_check['id']){
 				$list_return['status'] = 'success';
 			} else {
+				/* Check if the zone has already exist */
 				$list_return = wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zones.json',['method' => 'GET','timeout' => 20,]);
 				if(is_wp_error( $list_return )){
 					wp_die( $list_return->get_error_message() );
@@ -704,8 +791,8 @@ require_once('<?php echo plugin_dir_path( FSKEYCDN__FILE__ );?>include.php');
 					$zone_check = fsckeycdn_check($list_return['data']['zones'],$zone_name,'name');
 				}
 			}
-			if($list_return['status'] == 'success'){
-				if(!$zone_check){
+			if($list_return['status'] == 'success'){ // If the apikey works
+				if(!$zone_check){ // If the zone has not created, then create it
 					$default_settings['name'] = $zone_name;
 					$default_settings['originurl'] = $fsckeycdn_scheme.'://'.$fsckeycdn_realhost;
 					$default_settings['cachemaxexpire'] = 10080;
@@ -724,11 +811,11 @@ require_once('<?php echo plugin_dir_path( FSKEYCDN__FILE__ );?>include.php');
 					$add_return = json_decode($add_return['body'],true);
 					$notice = fsckeycdn_return_notice($add_return,true);
 					if($notice[1]){
-						$setup_zonealiases = true;
+						$setup_zonealiases = true; // Needs to create the zonealiases
 						update_option( 'fsckeycdn_id', $add_return['data']['zone']['id'] );
 					}
 					echo $notice[0];
-				} else {
+				} else {  // If the zone has created
 					update_option( 'fsckeycdn_id', $zone_check['id'] );
 					$aliaslist_return = wp_remote_request('https://'.$fsckeycdn_apikey.'@api.keycdn.com/zonealiases.json',['method' => 'GET','timeout' => 20,]);
 					$alias_check = fsckeycdn_check($aliaslist_return['data']['zonealiases'],$_SERVER['HTTP_HOST'],'name');
@@ -746,7 +833,7 @@ HTML;
 						wp_die( $notice );
 					}
 				}
-				if($setup_zonealiases){
+				if($setup_zonealiases){ // If needs to create the zonealiases
 					$addzonealiases = [
 						'zone_id' => $add_return['data']['zone']['id'],
 						'name' => $_SERVER['HTTP_HOST'],
@@ -785,7 +872,8 @@ HTML;
 HTML;
 				wp_die( $notice );
 			}
-			 ?>
+			// If it cannot add zonealias
+			?>
 			<h3>Enabling the KeyCDN</h3>
 			<p>You need to add Zonealias by your self:</p>
 			<ol>
@@ -866,6 +954,7 @@ require_once('<?php echo plugin_dir_path( FSKEYCDN__FILE__ );?>include.php'); //
 	<?php } ?>
 	<hr>
 	<a href="https://wordpress.org/support/plugin/full-site-cache-kc" class="button">Support Forum</a>
+	<a href="https://wordpress.org/support/topic/contribute-to-this-plugin/" class="button">Contribute to this plugin</a>
 	<?php if(isset($_SERVER['HTTP_CF_CONNECTING_IP'])){ ?>
 		<p>Detected you are using CloudFlare, <a target="_blank" href="https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare">you need to do some Extra Settings For CloudFlare after you actived KeyCDN,</a> or you will get error when you trying to clear cache. If you already did this, just ignore this notice.</p>
 	<?php } ?>

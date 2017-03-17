@@ -4,7 +4,7 @@ Donate link: https://tlo.xyz/donate/
 Tags: keycdn, cache, optimize, performance, speed, pagespeed, html, cdn, proxy
 Requires at least: 4.4
 Tested up to: 4.6
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GNU GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -14,7 +14,7 @@ This plugin allows full site acceleration for WordPress with KeyCDN, which gives
 
 > NOTE: This is an **unofficial** plugin.
 
-This plugin can help you to use KeyCDN on your WordPress, not only your Media and CSS, but also all HTML page. It is much faster than other cache plugins because it can cache the content on the [KeyCDN’s Edge Servers](https://www.keycdn.com/network?a=7126), which are close to the end-user. This plugin can automatically purge the page (and also the homepage, archive page, tag page, category page, feed, sitemap) when you publish a page or post.
+This plugin can help you to use KeyCDN on your WordPress, not only your Media and CSS, but also all HTML page. It is much faster than other cache plugins because it can cache the content on the [KeyCDN’s Edge Servers](https://www.keycdn.com/network?a=7126), which are close to the end-user. This plugins can automatically purge the page (and also the homepage, archive page, tag page, category page, feed, sitemap) when you publish a page or post.
 
 Video - install and enable it within 3 minutes:
 
@@ -22,9 +22,11 @@ Video - install and enable it within 3 minutes:
 
 The website of this plugin (also is an example website using this plugin): [keycdn.tlo.one](https://keycdn.tlo.one/)
 
-This plugin only caches the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
+This plugin only cache the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
 
-The development version is on [gitTLO](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN) and [GitHub](https://github.com/ZE3kr/Full-Site-Cache-for-KeyCDN), you can download the development version to help us to test, and [leave your issues here](https://git.tlo.xyz/ZE3kr/Full-Site-Cache-for-KeyCDN/issues).
+= Contribute to this plugin =
+
+The author @ze3kr is not using KeyCDN and this plugin anymore, so it's hard for @ze3kr to maintain this plugin. If any developer wants to contribute to this plugin, please leave your message [here](https://wordpress.org/support/topic/contribute-to-this-plugin/).
 
 = Features =
 
@@ -35,11 +37,11 @@ This plugin support those features **even if your server doesn’t support it**,
 + HTTP/2 with HPACK
 + GZIP
 + CDN (Layer 7 proxy)
-+ Hide origin IP and prevent DDOS attack to your server (Suggest using CloudFlare for the wp-admin domain, and change your IP address, [see it in “IP White List” section](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Advance-Feature)).
++ Hide origin IP and prevent DDOS attack to your server (Suggest using CloudFlare for the wp-admin doamin, and change your IP address, [see it in “IP White List” section](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Advance-Feature)).
 
 = Compare it with CloudFlare =
 
-The CloudFlare also can give you CDN, SSL, and HTTP/2 support, but there’s something KeyCDN can but CloudFlare free plan cannot:
+The CloudFlare also can give you CDN, SSL and HTTP/2 support, but there’s something KeyCDN can but CloudFlare free plan cannot:
 
 + **Cache HTML page**, that means all the HTML page on CloudFlare is not cacheable and the request will bypass your origin server.
 + Use custom SSL certificate, including **EV certificate**.
@@ -47,7 +49,7 @@ The CloudFlare also can give you CDN, SSL, and HTTP/2 support, but there’s som
 + Raw log forwarding in **real time** (CloudFlare has 24 hours delay for free plan)
 + Clear Cache by Tag
 
-However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is an affordable choice. And CloudFlare is also a very good DNS provider, you can still use it.
+However, KeyCDN is not a free service but a pay-as-you-go service, KeyCDN is a affordable choice. And CloudFlare is also a very good DNS provider, you can still use it.
 
 = Requirements =
 
@@ -69,7 +71,7 @@ Put the folder `full-site-cache-kc` in your server, to `wp-content/plugins/full-
 
 Or if you can add plugin online, you can search `full-site-cache-kc` and install it.
 
-After that, go to the settings page of this plugin, which is called “KeyCDN”, and click “Setup Online” button, and following the introduction of the installation, you **does not need** to follow the Manual Setup guide below.
+After that, goto the settings page of this plugin, which is called “KeyCDN”, and click “Setup Online” button, and following the introduction of the installation, you **does not need** to follow the Manual Setup guide below.
 
 == Manual Setup ==
 
@@ -81,7 +83,7 @@ Note: This plugin doesn’t support root domain like `example.com`, you have to 
 
 Add the configuration code to your `wp-config.php` file in `wp-config.php` **above** the line reading `/* That’s all, stop editing! Happy blogging. */`.
 
-You can get these configurations in the settings page of this plugin by click “Generate Configuration (for Manual Setup)” button.
+You can get those configuration in the settings page of this plugin by click “Generate Configuration (for Manual Setup)” button.
 
 Example configuration:
 
@@ -95,7 +97,7 @@ Example configuration:
 	]; // The key (1, 2, 3) is blog id. the value (10001, 10002, 10003) is KeyCDN Zone ID.
 	// $fsckeycdn_id = "10001"; // Use this line instead of above if you doesn't use multisite.
 
-Then add a `require_once` function just below the variables just add, that need to run before every plugin, to identify the server is KeyCDN or not.
+Then add a `require_once` function just below the variables just add, that need to run before evey plugin, to identify the server is KeyCDN or not.
 
 	require_once(ABSPATH . 'wp-content/plugins/full-site-cache-kc/include.php'); // This plugin need run some scripts before everything, so you need to add this, if you use a different location for plugins, change it.
 
@@ -105,9 +107,9 @@ After that, you can enable this plugin.
 
 You need to use a domain like `www.example.com` or `blog.example.com` but not root domain like `example.com`, because you need to create a CNAME on that domain.
 
-If you are using the domain like `www.example.com`, you need to create a DNS at `wp-admin.example.com` that point to your server.
+If you are using domain like `www.example.com`, you need to create a DNS at `wp-admin.example.com` that point to your server.
 
-If you are using the domain like `blog.example.com`, you need to create a DNS at `wp-admin-blog.example.com` that point to your server.
+If you are using domain like `blog.example.com`, you need to create a DNS at `wp-admin-blog.example.com` that point to your server.
 
 Example BIND DNS file for root domain:
 
@@ -115,11 +117,11 @@ Example BIND DNS file for root domain:
 	www.example.com 300 IN CNAME <your-zone-name>-<userid-hex>.kxcdn.com
 	wp-admin.example.com 300 IN A <origin-server>
 
-After you set up, you need to go to the new host to visiting WordPress dashboard.
+After you setted up, you need to go to the new host to visit WordPress dashboard.
 
 And you need to change Siteurl to the new domain, keep Home URL not change. Example: Siteurl is `wp-admin.example.com` and Homeurl is `www.example.com`. Or Siteurl is `wp-admin-blog.example.com` and Homeurl is `blog.example.com`.
 
-And if you need to edit your post, or go to the dashboard, you need to go to `wp-admin.example.com/wp-admin/` or `wp-admin-blog.example.com/wp-admin/`
+And if you need to edit your post, or go to the dashboard, you need to goto `wp-admin.example.com/wp-admin/` or `wp-admin-blog.example.com/wp-admin/`
 
 = 3. Setup KeyCDN =
 
@@ -163,7 +165,7 @@ Example:
 
 = Different API Key for Each Site =
 
-KeyCDN has Zone Limit, so if you has too many sites in your multisite, you have to use it.
+KeyCDN has Zone Limit, so if your has too many site in your multisite, you have to use it.
 
 This plugin can use different API Key for each site:
 
@@ -185,13 +187,43 @@ And you can use different API Key for every 10 site like:
 
 = Variable X-Pull Key =
 
-By default online setup will enable this feature, this makes X-Pull Key more secure, especially for multisite.
+By default online setup will enable this feature, this make X-Pull Key more secure, especially for multisite.
 
 This feature can generate different X-Pull Key for each domain, even if you enable Forward Host Header, it can prevent visitor visit your site using another domain.
 
+Algorithm:
+
+	substr(fsckeycdn_convert('f'.md5($fsckeycdn_x_pull_key.$_SERVER['HTTP_HOST'])),-15);
+
+“fsckeycdn_convert” is a function that can convert hexadecimal to alphameric.
+
+	function fsckeycdn_convert($s, $to=62) {
+		$dict = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$res = '';
+		$b = '';
+		if($to > 0) {
+			$to = ceil(log($to, 2));
+			for($i=0; $i<strlen($s); $i++) $b .= sprintf('%04b', hexdec($s{$i}));
+			while(strlen($b) >= $to) {
+				$res = $dict{bindec(substr($b, -$to))} . $res;
+				$b = substr($b, 0, -$to);
+			}
+			$res = $dict{bindec($b)} . $res;
+			return $res;
+		}
+		$to = ceil(log(-$to, 2));
+		for($i=0; $i<strlen($s); $i++) $b .= sprintf("%0{$to}b", strpos($dict, $s{$i}));
+		while(strlen($b) > 4) {
+			$res = $dict{bindec(substr($b, -4))} . $res;
+			$b = substr($b, 0, -4);
+		}
+		if(bindec($b)) $res = $dict{bindec($b)} . $res;
+		return $res;
+	}
+
 = Custom CDN Domain =
 
-You can custom your CDN domain, it’s a specific domain that only for Images, CSS, and JS.
+You can custom your CDN domain, it’s a specific domain that only for Images, CSS and JS.
 
 Just add this in the `wp-config.php`.
 
@@ -241,13 +273,13 @@ Then, go to KeyCDN Zone settings page, change “Origin URL” to `http(s)://[ke
 
 == About Purge ==
 
-This plugin will purge all page that needs to be purge, but when your customized your theme or changed your theme, you need to purge your site manually. go to the settings page and you can find purge button.
+This plugin will purge all page that need to be purge, but when your customized your theme or changed your theme, you need to purge your site manually. go to the settings page and you can find purge button.
 
 You can set `$fsckeycdn_purge` to change purge type.
 
 + `1`. Purge that page and every archive page when a post/page published (Recommend, default).
-+ `2`. Purge whole blog (not include CSS, JS, and image) when a post/page published.
-+ `3`. Purge all page that needs to be purge (Beta).
++ `2`. Purge whole blog (not include css, js and image) when a post/page published.
++ `3`. Purge all page that need to be purge (Beta).
 + `4`. Only purge that page when a post/page published.
 + `5`. Do nothing when a post/page published.
 
@@ -257,7 +289,7 @@ Example:
 
 == About “Cache Enabler” plugin ==
 
-This plugin only caches the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
+This plugin only cache the content on the KeyCDN’s Edge Servers but not on your origin server, so if you install another cache plugin and use both of them, can improve performance. Now this plugin only works well with <a target="_blank" href="https://wordpress.org/plugins/cache-enabler/">Cache Enabler - WordPress Cache</a>.
 
 If you click “Clear Cache” on the admin bar, it will automatically clear KeyCDN Tag and also clear the cache of “Cache Enabler” plugin.
 
@@ -265,7 +297,7 @@ And if you change “Cache Behavior” in the settings page of “Cache Enabler�
 
 == Extra Settings For Root Domain ==
 
-You will get an error if you trying to enable it for the root domain, whatever you setup manually or not.
+You will get an error if you trying to enable it for root domain, whatever you setup manually or not.
 
 To solve this problem, you need to change your domain beginning with `www.`, for example, if your blog domain is `example.com`, you have to change it to `www.example.com`.
 
@@ -277,15 +309,15 @@ $fsckeycdn_root_domain_setup = true;
 
 = For NOT Multisite Installed =
 
-Go to the general settings page, change WordPress Address and Site Address to the new domain.
+Go to general settings page, change WordPress Address and Site Address to the new domain.
 
 = For Multisite Installed =
 
-If you NOT use subdomain install, please [see this page](http://codex.wordpress.org/Moving_WordPress#Moving_WordPress_Multisite) to find out how to move WordPress multisite to a new URL.
+If you NOT use subdomain install, pleace [see this page](http://codex.wordpress.org/Moving_WordPress#Moving_WordPress_Multisite) to find out how to move WordPress multisite to a new URL.
 
-If you use subdomain install, I suggest you create a new blog and that blog’s domain is beginning with `www.`, for example, your have a network blog which uses domain `example.com`, and you create an another blog which uses domain `www.example.com`. Then input the content from the old blog which uses domain `example.com`, and enable this plugin for the new blog.
+If you use subdomain install, I suggest you create a new blog and that blog’s domain is beginning with `www.`, for example, your have a network blog which use domain `example.com`, and you create a another blog which use domain `www.example.com`. Then input the content from the old blog which use domain `example.com`, and enable this plugin for the new blog.
 
-After you add `require_once` function in `wp-config.php`, it will automatically redirect the old blog to new blog, and not effect with admin page.
+After you add `require_once` function in `wp-config.php`, it will automatically redirect the old blog to new bog, and not effect with admin page.
 
 == How to fully disable this plugin ==
 
@@ -293,7 +325,7 @@ It will disable KeyCDN for ALL blogs if you are using Multisite.
 
 = 1. Remove the configurations =
 
-You need to remove the lines that you added in the wp-config.php file. And you **MUST** remove these line before your **delete** this plugin.
+You need to remove the lines that you added in wp-config.php file. And you **MUST** remove these line before your **delete** this plugin.
 
 	/* Start WP KeyCDN code */
 	Some codes……
@@ -313,17 +345,17 @@ Just add this codes to `wp-config.php`
 
 	$fsckeycdn_id[1] = false;
 
-You need to add this line **after** the `$fsckeycdn_id` if you use Manual Setup. Change `1` to your blog ID that needs to be disabled.
+You need to add this line **after** the `$fsckeycdn_id` if you use Manual Setup. Change `1` to your blog ID that need to disabled.
 
 == Known Issues ==
 
-+ If you set a password to a post/page, it may not view by visitors even if they have password.
++ If you set a password to a post/page, it may cannot view by visitors even if they has password.
 
 == Frequently Asked Questions ==
 
-= Why can’t use this plugin on root domain? =
+= Why can’t use this plugin on root doamin? =
 
-Because to use KeyCDN, it needs to set a CNAME record on the domain. But CNAME records are not supported on root domains (e.g. example.com) as they would conflict with the SOA- and NS-records (RFC1912 section 2.4: “A CNAME record is not allowed to coexist with any other data.”), an alternative is to redirect your root domain to a subdomain (e.g. www).
+Because to use KeyCDN, it need to set a CNAME record on the domain. But CNAME records are not supported on root domains (e.g. example.com) as they would conflict with the SOA- and NS-records (RFC1912 section 2.4: “A CNAME record is not allowed to coexist with any other data.”), an alternative is to redirect your root domain to a subdomain (e.g. www).
 
 However, you are still able to use root domain if your DNS provider supports ANAME record (or CNAME Flattening), for example, CloudFlare supports this feature, so you can set a CNAME record on your root domain and won't get any error! The version 2.2.0 brings this feature, you need to add this line to your `wp-config.php`:
 
@@ -331,17 +363,17 @@ However, you are still able to use root domain if your DNS provider supports ANA
 
 = The cache is not cleared when I updated a post/page =
 
-If you are using CloudFlare proxy for the `wp-admin` domain, you need [to do some Extra Settings For CloudFlare after you activated KeyCDN](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare), after that, the cache will be cleared correctly, if it still not works, tries below:
+If you are using CloudFlare proxy for the `wp-admin` domain, you need [to do some Extra Settings For CloudFlare after you actived KeyCDN](https://wordpress.org/plugins/full-site-cache-kc/other_notes/#Extra-Settings-For-CloudFlare), after that, the cache will be cleared correctly, if it still not work, try below:
 
 We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared in some very specific environment, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
 
 `$fsckeycdn_no_cron = true;`
 
-In my test, this error (cron job not work) only appears when I use CloudFlare’s Universal SSL and using an old operating system that the `curl` doesn’t support ECDSA/ECC SSL. I suggest you use an up-to-date operating system.
+In my test, this error (cron job not work) is only appears when I use CloudFlare’s Universal SSL and using a old operating system that the `curl` doesn’t support ECDSA/ECC SSL. I suggest you to use a up-to-date operating system.
 
 = Why this plugin need to change the Siteurl? =
 
-KeyCDN will enable cache for all request, so it won’t show admin bar or any admin page bypass the KeyCDN. This plugin will change your Siteurl, add `wp-admin` prefix to your domain, you can go to the admin page by the new domain. This plugin will set the redirect, so you don’t need to care about it at most of the time. The visitor who not logged in can’t visit `wp-admin` domain.
+KeyCDN will enable cache for all request, so it won’t show admin bar or any admin page by pass the KeyCDN. This plugin will change your Siteurl, add `wp-admin` prefix to your domain, you can go to the admin page by the new domain. This plugin will set the redirect, so you don’t need to care about it at most of time. The visitor who not logged in can’t visit `wp-admin` domain.
 
 NOTE: This plugin only changes the Siteurl, but not the Home URL.
 
@@ -349,27 +381,34 @@ NOTE: This plugin only changes the Siteurl, but not the Home URL.
 
 This plugin needs your API Key to:
 
-+ Purge Zone Cache (When you click “Purge Everything” button in the settings page or the WordPress Core has updated.)
++ Purge Zone Cache (When you click “Purge Everything” button in the settings page, or the WordPress Core has updated.)
 + Purge Zone Tag (When a new post published, switched theme, trashed a post.)
 + List Zones (To check if the zone already exists, and also use it to check API Key is correct or not)
 + Add Zone (When you first setup this plugin)
 + List Zonealiases (To check if the zonealiases already exists)
 + Add Zonealias (When you first setup this plugin)
 
-Your API Key only store in the `wp-config.php` file, this plugin never store this in the database, and never send this to other servers.
+Your API Key only store in the `wp-config.php` file, this plugin never store this in the database, and never send this to other server.
 
 == Changelog ==
 
+= 2.2.1 =
+
+The author @ze3kr is not using KeyCDN and this plugin anymore, so it's hard for @ze3kr to maintain this plugin. If any developer wants to contribute to this plugin, please leave your message [here](https://wordpress.org/support/topic/contribute-to-this-plugin/).
+
++ Add contribute link
++ Add comments in the code
+
 = 2.2.0 =
 
-+ Use the cron job to purge, so now it doesn't have delay to purge!
-+ Add Clear Cache button in the settings page.
++ Use cron job to purge, so now it doesn't has delay to purge!
++ Add Clear Cache button in settings page.
 
 = 2.1.6 =
 
 + Support to use KeyCDN on a non-www root domain for some DNS provider.
 + Fix a bug when using setup online.
-+ Compatible with WordPress 4.6. (Thanks to the [#37456](https://core.trac.wordpress.org/ticket/37456) is fixed in WordPress core, this plugin works in 4.6 now!)
++ Compatible with WordPress 4.6. (Thanks to the [#37456](https://core.trac.wordpress.org/ticket/37456) is fixed in WordPress core, this plugin is works in 4.6 now!)
 
 = 2.1.5.1 =
 
@@ -390,7 +429,7 @@ Your API Key only store in the `wp-config.php` file, this plugin never store thi
 + Add “Purge Everything” button. By default, the “Clear Cache” button on right top only purge the cache of HTML page of this blog but not include CSS, JS and media files.
 + Add “Feedback & Support”, “Donate” and “Write a review” button.
 + Add “Disable KeyCDN” for NOT manual setup
-+ Fixed can’t rewrite URL of the image correctly in some themes.
++ Fixed can’t rewrite URL of image correctly in some themes.
 
 
 = 2.1.2 =
@@ -400,31 +439,31 @@ Your API Key only store in the `wp-config.php` file, this plugin never store thi
 
 = 2.1.1 =
 
-+ Fix bugs works better with `Cache Enabler`.
++ Fix bugs, works better with `Cache Enabler`.
 
 = 2.1 =
 
 + Change name `Full Site Cache Enabler for KeyCDN` to `Full Site Cache for KeyCDN`.
-+ Add support with `Cache Enabler`, now you can clear cache to include `Cache Enabler - WordPress Cache` in the settings page of this plugin.
++ Add support with `Cache Enabler`, now you can clear cache include `Cache Enabler - WordPress Cache` in the settings page of this plugin.
 
 = 2.0 =
 
-+ Add setup online feature, you don’t need to create a KeyCDN Zone by your self.
-+ Add an admin page that can purge page.
++ Add setup online feature, you don’t need to create a KeyCDN Zone by you self.
++ Add a admin page that can purge page.
 + Add Variable X-Pull Key feature.
 + Add Different API Key for Each Site feature.
 
 = 1.0.0 =
 
-Improve performance, some variable changed in this version, you need to do something before the update, see “Upgrade Notice”.
+Improve performance, some variable changed in this version, you need to do something before update, see “Upgrade Notice”.
 
 = 0.4.3 =
 
-IPv6 Whitelist supported!
+IPv6 White list supported!
 
 = 0.4.2 =
 
-Never redirect when a user is logged in.
+Never redirect when user is logged in.
 
 = 0.4.1 =
 
@@ -437,17 +476,21 @@ Just update readme.txt
 
 == Upgrade Notice ==
 
+= 2.2.1 =
+
+The author @ze3kr is not using KeyCDN and this plugin anymore, so it's hard for @ze3kr to maintain this plugin. If any developer wants to contribute to this plugin, please leave your message [here](https://wordpress.org/support/topic/contribute-to-this-plugin/).
+
 = 2.2.0 =
 
 We use cron job to purge for this version to remove delay when purge the cache, you might get some error like the cache is not cleared in some very specific environment, that is because the cron job to your site is broken, you can add this to your `wp-config.php` to use old behavior:
 
 `$fsckeycdn_no_cron = true;`
 
-In my test, this error only appears when I use CloudFlare’s Universal SSL and using an old operating system that the `curl` doesn’t support ECDSA/ECC SSL. I suggest you use an up-to-date operating system.
+In my test, this error is only appears when I use CloudFlare’s Universal SSL and using a old operating system that the `curl` doesn’t support ECDSA/ECC SSL. I suggest you to use a up-to-date operating system.
 
 = 2.1.5.1 =
 
-Fix a Fatal error in some old PHP version. By the way, you must use this plugin on PHP 5.4 or higher, however, PHP 5.6 or higher are recommended.
+Fix a Fatal error in some old PHP version. By the way, you must use this plugin on PHP 5.4 or higher, however, PHP 5.6 or higher are recommend.
 
 = 2.1.5 =
 
@@ -459,7 +502,7 @@ Fix bugs.
 
 = 2.1.3 =
 
-Add “Purge Everything” button. By default, the “Clear Cache” button on right top only purge the cache of HTML page of this blog but not include CSS, JS and media files. Add “Feedback & Support”, “Donate” and “Write a review” button. Add “Disable KeyCDN” for NOT manual setup. Fixed can’t rewrite URL of the image correctly in some themes.
+Add “Purge Everything” button. By default, the “Clear Cache” button on right top only purge the cache of HTML page of this blog but not include CSS, JS and media files. Add “Feedback & Support”, “Donate” and “Write a review” button. Add “Disable KeyCDN” for NOT manual setup. Fixed can’t rewrite URL of image correctly in some themes.
 
 = 2.1.2 =
 
@@ -467,15 +510,15 @@ Fix URL rewrite for JS and URL Encoded. Fixed customize page preview.
 
 = 2.1.1 =
 
-Fix bugs works better with `Cache Enabler`.
+Fix bugs, works better with `Cache Enabler`.
 
 = 2.1 =
 
-Change name `Full Site Cache Enabler for KeyCDN` to `Full Site Cache for KeyCDN`. Add support with `Cache Enabler`, now you can clear cache to include `Cache Enabler - WordPress Cache` in the settings page of this plugin.
+Change name `Full Site Cache Enabler for KeyCDN` to `Full Site Cache for KeyCDN`. Add support with `Cache Enabler`, now you can clear cache include `Cache Enabler - WordPress Cache` in the settings page of this plugin.
 
 = 2.0.0 =
 
-This is a big update, you can set up online very easily now.
+This is a big update, you can setup online very easily now.
 
 = 1.0.0 =
 
@@ -495,7 +538,7 @@ Then, you need to change KeyCDN Zone settings, change `Expire (in minutes)` to 0
 
 = 0.4.3 =
 
-IPv6 Whitelist supported!
+IPv6 White list supported!
 
 = 0.4.2 =
 
